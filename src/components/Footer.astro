@@ -5,7 +5,7 @@ import { getLocalizedPath, withBase } from '@/utils/urls';
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const socials = [
-  { label: 'GitHub', url: site.github }, { label: 'Google Scholar', url: site.googleScholar }, { label: 'ORCID', url: site.orcid }, { label: 'LinkedIn', url: site.linkedin }, ...site.socialLinks
+  { label: 'GitHub', url: site.github }, { label: 'Google Scholar', url: site.googleScholar }, { label: 'ORCID', url: site.orcid }, { label: 'LinkedIn', url: site.linkedin }, ...site.socialLinks.map((link) => ({ ...link, label: locale === 'zh' ? link.label : (link.labelEn || link.label) }))
 ].filter((item) => item.url);
 ---
 <footer class="footer" data-pagefind-ignore>

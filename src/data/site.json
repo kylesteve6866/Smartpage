@@ -1,5 +1,6 @@
 {
-  "siteName": "Your Name — LiChang",
+  "siteName": "李畅 — 个人学术主页",
+  "siteNameEn": "Kyle — Academic Profile",
   "name": "李畅",
   "nameEn": "Kyle",
   "title": "多智能体仿真，强化学习，计算机图形学，群体智能",
@@ -20,6 +21,12 @@
     "强化学习",
     "计算机图形学",
     "群体智能"
+  ],
+  "researchInterestsEn": [
+    "Multi-agent simulation",
+    "Reinforcement learning",
+    "Computer graphics",
+    "Swarm intelligence"
   ],
   "navigation": [
     {

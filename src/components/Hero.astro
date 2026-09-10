@@ -9,7 +9,7 @@ const name = locale === 'zh' ? site.name : site.nameEn;
 <section class="hero container">
   <div class="hero-copy">
     <p class="hero-kicker" data-reveal="fade">{locale === 'zh' ? site.title : site.titleEn}</p>
-    <h1 data-reveal="fade-up"><span>{name}</span>{site.name !== site.nameEn && <small>{locale === 'zh' ? site.nameEn : site.name}</small>}</h1>
+    <h1 data-reveal="fade-up"><span>{name}</span>{locale === 'zh' && site.name !== site.nameEn && <small lang="en">{site.nameEn}</small>}</h1>
     <p class="hero-bio" data-reveal="fade-up">{locale === 'zh' ? site.bio : site.bioEn}</p>
     <div class="hero-actions" data-reveal="fade-up">
       <a class="button" href={getLocalizedPath(locale, '/research/')}>{locale === 'zh' ? '查看研究' : 'View research'}</a>

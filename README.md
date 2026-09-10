@@ -16,6 +16,8 @@
 ```text
 .
 ├─ .github/workflows/deploy.yml   # GitHub Pages 自动部署
+├─ scripts/translate-content.mjs  # DeepSeek Flash 自动翻译
+├─ .i18n-cache.json               # 翻译缓存（由 Actions 维护）
 ├─ .pages.yml                     # Pages CMS 内容后台配置
 ├─ public/
 │  ├─ uploads/                    # CMS 图片
@@ -96,6 +98,14 @@ npm run build
 
 Pages CMS 的 **About / Research / CV** 中已有六个中英文页面。直接编辑正文即可，不要删除这些文件。
 
+## 自动中英文翻译
+
+现在只需要在 Pages CMS 维护中文源内容。每次保存中文 Site Settings、About / Research / CV 或已发布的 Blog、Publication、Project、News 后，GitHub Actions 会自动调用 DeepSeek `deepseek-v4-flash` 生成英文版本，并把英文 Markdown 提交回仓库，再继续构建部署。翻译使用 JSON 输出、关闭 thinking，并用 `.i18n-cache.json` 按内容哈希缓存；没有变化的内容不会重复计费。Draft 默认不会调用模型，发布 Draft 后才会翻译。
+
+首次启用时，在 GitHub 仓库打开 **Settings → Secrets and variables → Actions → New repository secret**，名称填写 `DEEPSEEK_API_KEY`，值填写你重新生成的 DeepSeek API Key。Key 只存在 GitHub Secret，不要写入 `site.json`、`.env.example`、Markdown、日志或提交记录。自动生成的文章、项目、论文和动态文件名以 `auto-en-` 开头，固定页面使用 `en-*.md`；Pages CMS 已隐藏这些文件，不要手动编辑。若 Secret 尚未配置，部署仍会成功，但会跳过翻译。
+
+翻译模型固定为 Flash，代码不会读取或选择 Pro 模型。需要强制重新翻译时，在 Actions 运行环境中设置 `FORCE_TRANSLATION=true` 后重新运行；普通编辑不需要任何额外操作。
+
 ## Pages CMS
 
 1. 打开 [Pages CMS](https://app.pagescms.org) 并用 GitHub 登录。
@@ -144,7 +154,7 @@ DNS 按 GitHub Pages 提示配置。若要由仓库固定域名，也可增加 `
 
 ## 中英文内容
 
-中文位于 `/`，英文位于 `/en/`。页面内容是两套独立 Markdown，不使用浏览器自动翻译。新增中英文 Blog/Project 时，为两者填写相同 `translationKey`，语言切换会优先进入对应译文；缺少译文时回到目标语言首页。
+中文位于 `/`，英文位于 `/en/`。中文是可编辑源内容，英文由 GitHub Actions 自动生成并保存在仓库中，不使用浏览器自动翻译。文章或项目的 `translationKey` 由工作流自动补齐；语言切换会优先进入对应译文，缺少译文时回到目标语言首页。
 
 ## 常见问题
 
@@ -156,6 +166,6 @@ DNS 按 GitHub Pages 提示配置。若要由仓库固定域名，也可增加 `
 
 **项目站点图片或链接 404？** 内容字段中的站内图片应写 `/uploads/...`，不要手写仓库名。构建会统一添加 base path。
 
-**需要保存 Secret 吗？** 不需要。Giscus 与 tawk.to 的 ID 都是公开前端配置。不要把 GitHub token、API key 或其他私密凭证提交到仓库。
+**需要保存 Secret 吗？** Giscus 与 tawk.to 的 ID 都是公开前端配置；自动翻译需要唯一的 GitHub Actions Secret `DEEPSEEK_API_KEY`。不要把 GitHub token、DeepSeek API key 或其他私密凭证提交到仓库。
 
 更多非开发者操作说明见 [`docs/CONTENT-GUIDE.md`](docs/CONTENT-GUIDE.md)。

@@ -30,19 +30,20 @@ content:
     path: src/data/site.json
     format: json
     fields:
-      - { name: siteName, label: Site name, type: string, required: true }
+      - { name: siteName, label: Site name (Chinese), type: string, required: true }
+      - { name: siteNameEn, label: Site name (English, auto-generated), type: string, hidden: true }
       - { name: name, label: Chinese name, type: string, required: true }
-      - { name: nameEn, label: English name, type: string, required: true }
+      - { name: nameEn, label: English name (optional preferred name), type: string }
       - { name: title, label: Chinese title, type: string, required: true }
-      - { name: titleEn, label: English title, type: string, required: true }
+      - { name: titleEn, label: English title (auto-generated), type: string, hidden: true }
       - { name: bio, label: Chinese short bio, type: text, required: true }
-      - { name: bioEn, label: English short bio, type: text, required: true }
+      - { name: bioEn, label: English short bio (auto-generated), type: text, hidden: true }
       - { name: description, label: Chinese SEO description, type: text, required: true }
-      - { name: descriptionEn, label: English SEO description, type: text, required: true }
+      - { name: descriptionEn, label: English SEO description (auto-generated), type: text, hidden: true }
       - { name: email, label: Email, type: string }
       - { name: location, label: Location, type: string }
       - { name: institution, label: Institution (Chinese), type: string }
-      - { name: institutionEn, label: Institution (English), type: string }
+      - { name: institutionEn, label: Institution (English, auto-generated), type: string, hidden: true }
       - name: avatar
         label: Portrait
         type: image
@@ -55,7 +56,8 @@ content:
       - { name: googleScholar, label: Google Scholar URL, type: string }
       - { name: orcid, label: ORCID URL, type: string }
       - { name: linkedin, label: LinkedIn URL, type: string }
-      - { name: researchInterests, label: Research interests, type: string, list: true }
+      - { name: researchInterests, label: Research interests (Chinese), type: string, list: true }
+      - { name: researchInterestsEn, label: Research interests (English, auto-generated), type: string, list: true, hidden: true }
       - name: deployment
         label: Deployment overrides
         type: object
@@ -102,6 +104,7 @@ content:
     label: About / Research / CV
     type: collection
     path: src/content/pages
+    exclude: ["en-*.md", "en-*.mdx"]
     format: yaml-frontmatter
     subfolders: false
     operations: { create: false, delete: false }
@@ -112,11 +115,7 @@ content:
     fields:
       - { name: title, label: Title, type: string, required: true }
       - { name: description, label: Description, type: text, required: true }
-      - name: locale
-        label: Language
-        type: select
-        required: true
-        options: { values: [{ name: zh, label: Chinese }, { name: en, label: English }] }
+      - { name: locale, label: Language (automatic), type: string, default: zh, hidden: true }
       - name: page
         label: Page
         type: select
@@ -131,6 +130,7 @@ content:
     label: Blog
     type: collection
     path: src/content/blog
+    exclude: ["auto-en-*.md", "auto-en-*.mdx", "demo-*.md", "demo-*.mdx"]
     format: yaml-frontmatter
     subfolders: false
     filename: { template: "{slug}.md", field: true }
@@ -155,12 +155,8 @@ content:
       - { name: coverAlt, label: Cover alt text, type: string }
       - { name: tags, label: Tags, type: string, list: true }
       - { name: category, label: Category, type: string, default: Notes }
-      - name: locale
-        label: Language
-        type: select
-        required: true
-        options: { values: [{ name: zh, label: Chinese }, { name: en, label: English }] }
-      - { name: translationKey, label: Translation key, type: string, description: Use the same key on both language versions. }
+      - { name: locale, label: Language (automatic), type: string, default: zh, hidden: true }
+      - { name: translationKey, label: Translation key (automatic), type: string, hidden: true }
       - { name: featured, label: Featured, type: boolean, default: false }
       - { name: draft, label: Draft, type: boolean, default: true }
       - { name: readingTime, label: Reading time override, type: number }
@@ -175,6 +171,7 @@ content:
     label: Publications
     type: collection
     path: src/content/publications
+    exclude: ["auto-en-*.md", "demo-*.md"]
     format: yaml-frontmatter
     filename: { template: "{slug}.md", field: true }
     view:
@@ -207,18 +204,15 @@ content:
         required: true
         options: { values: [journal, conference, preprint, book, chapter, other] }
       - { name: featured, label: Featured, type: boolean, default: false }
-      - name: locale
-        label: Language
-        type: select
-        required: true
-        options: { values: [zh, en] }
-      - { name: translationKey, label: Translation key, type: string }
+      - { name: locale, label: Language (automatic), type: string, default: zh, hidden: true }
+      - { name: translationKey, label: Translation key (automatic), type: string, hidden: true }
       - { name: draft, label: Draft, type: boolean, default: true }
 
   - name: projects
     label: Projects
     type: collection
     path: src/content/projects
+    exclude: ["auto-en-*.md", "auto-en-*.mdx", "demo-*.md", "demo-*.mdx"]
     format: yaml-frontmatter
     filename: { template: "{slug}.md", field: true }
     view:
@@ -247,8 +241,8 @@ content:
       - { name: tags, label: Tags, type: string, list: true }
       - { name: featured, label: Featured, type: boolean, default: false }
       - { name: draft, label: Draft, type: boolean, default: true }
-      - { name: locale, label: Language, type: select, required: true, options: { values: [zh, en] } }
-      - { name: translationKey, label: Translation key, type: string }
+      - { name: locale, label: Language (automatic), type: string, default: zh, hidden: true }
+      - { name: translationKey, label: Translation key (automatic), type: string, hidden: true }
       - name: body
         label: Project details
         type: rich-text
@@ -258,6 +252,7 @@ content:
     label: News
     type: collection
     path: src/content/news
+    exclude: ["auto-en-*.md", "demo-*.md"]
     format: yaml-frontmatter
     filename: { template: "{slug}.md", field: true }
     view:
@@ -276,5 +271,5 @@ content:
         type: select
         options: { values: [publication, conference, project, visit, personal, other] }
       - { name: featured, label: Featured, type: boolean, default: false }
-      - { name: locale, label: Language, type: select, required: true, options: { values: [zh, en] } }
+      - { name: locale, label: Language (automatic), type: string, default: zh, hidden: true }
       - { name: draft, label: Draft, type: boolean, default: true }

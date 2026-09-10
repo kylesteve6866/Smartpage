@@ -1,12 +1,15 @@
 ---
-import { render, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import type { Locale } from '@/types';
 import { assetUrl } from '@/utils/urls';
 interface Props { project: CollectionEntry<'projects'>; locale: Locale }
 const {project,locale}=Astro.props;const {Content}=await render(project);
+const allProjects = await getCollection('projects');
+const translated = project.data.translationKey ? allProjects.find((item) => item.data.translationKey === project.data.translationKey && item.data.locale !== locale) : undefined;
+const alternatePath = translated ? `/projects/${translated.data.slug}/` : '/projects/';
 ---
-<BaseLayout title={project.data.title} description={project.data.description} {locale} image={project.data.image} translationPath="/projects/">
+  <BaseLayout title={project.data.title} description={project.data.description} {locale} image={project.data.image} translationPath={alternatePath}>
   <header class="page-head"><div class="container"><p class="eyebrow">{project.data.role|| (locale==='zh'?'研究项目':'Research project')}</p><h1>{project.data.title}</h1><p>{project.data.description}</p><div class="project-links">{project.data.links.map((link)=><a class="button secondary" href={link.url} target="_blank" rel="noopener">{link.label}</a>)}{project.data.video&&<a class="button secondary" href={project.data.video} target="_blank" rel="noopener">{locale==='zh'?'查看视频':'Watch video'}</a>}</div></div></header>
   {project.data.image&&<figure class="project-hero container"><img src={assetUrl(project.data.image)} alt={project.data.imageAlt} width="1600" height="1000" /></figure>}
   <article class="copy-container section prose" data-pagefind-body><Content /></article>

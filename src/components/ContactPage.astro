@@ -5,7 +5,7 @@ import site from '@/data/site';
 import type { Locale } from '@/types';
 interface Props { locale: Locale }
 const { locale }=Astro.props;
-const links=[{label:'Email',url:site.email?`mailto:${site.email}`:''},{label:'GitHub',url:site.github},{label:'Google Scholar',url:site.googleScholar},{label:'ORCID',url:site.orcid},{label:'LinkedIn',url:site.linkedin},...site.otherLinks].filter((x)=>x.url);
+const links=[{label:'Email',url:site.email?`mailto:${site.email}`:''},{label:'GitHub',url:site.github},{label:'Google Scholar',url:site.googleScholar},{label:'ORCID',url:site.orcid},{label:'LinkedIn',url:site.linkedin},...site.otherLinks.map((link)=>({ ...link, label: locale === 'zh' ? link.label : (link.labelEn || link.label) }))].filter((x)=>x.url);
 ---
 <BaseLayout title={locale==='zh'?'联系':'Contact'} description={locale==='zh'?'学术交流与合作联系方式。':'Contact details for academic conversation and collaboration.'} {locale}>
   <header class="page-head"><div class="container"><p class="eyebrow">{locale==='zh'?'保持联系':'Stay in touch'}</p><h1>{locale==='zh'?'联系':'Contact'}</h1><p>{locale==='zh'?'欢迎就研究、合作与学术交流来信。':'For research, collaboration, or academic conversation.'}</p></div></header>

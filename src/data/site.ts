@@ -3,6 +3,7 @@ import rawSettings from './site.json';
 export interface SiteLink {
   label: string;
   url: string;
+  labelEn?: string;
 }
 
 export interface NavigationItem {
@@ -13,6 +14,7 @@ export interface NavigationItem {
 
 export interface SiteSettings {
   siteName: string;
+  siteNameEn: string;
   name: string;
   nameEn: string;
   title: string;
@@ -33,6 +35,7 @@ export interface SiteSettings {
   linkedin: string;
   otherLinks: SiteLink[];
   researchInterests: string[];
+  researchInterestsEn: string[];
   navigation: NavigationItem[];
   socialLinks: SiteLink[];
   defaultLocale: 'zh' | 'en';
@@ -66,6 +69,7 @@ const raw = rawSettings as unknown as Partial<SiteSettings>;
 
 const site: SiteSettings = {
   siteName: raw.siteName ?? 'Your Name — Academic Profile',
+  siteNameEn: raw.siteNameEn ?? raw.siteName ?? 'Your Name — Academic Profile',
   name: raw.name ?? 'Your Name',
   nameEn: raw.nameEn ?? 'Your Name',
   title: raw.title ?? '',
@@ -86,6 +90,7 @@ const site: SiteSettings = {
   linkedin: raw.linkedin ?? '',
   otherLinks: raw.otherLinks ?? [],
   researchInterests: raw.researchInterests ?? [],
+  researchInterestsEn: raw.researchInterestsEn ?? [],
   navigation: raw.navigation ?? [],
   socialLinks: raw.socialLinks ?? [],
   defaultLocale: raw.defaultLocale ?? 'zh',

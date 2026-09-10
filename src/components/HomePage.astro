@@ -18,7 +18,14 @@ const projects = sortByDate(projectsRaw.filter((x)=>x.data.locale===locale&&x.da
 const publications = pubsRaw.filter((x)=>x.data.locale===locale&&x.data.featured&&isPublished(x)).sort((a,b)=>b.data.year-a.data.year).slice(0,4);
 const news = sortByDate(newsRaw.filter((x)=>x.data.locale===locale&&isPublished(x))).slice(0,5);
 const posts = sortByDate(postsRaw.filter((x)=>x.data.locale===locale&&isPublished(x))).slice(0,3);
-const interests = site.researchInterests;
+const interests = locale === 'zh' ? site.researchInterests : site.researchInterestsEn;
+const introduction = locale === 'zh'
+  ? interests.length
+    ? `我关注${interests.slice(0,2).join('、')}，并尝试用清晰、可复现的方法理解复杂问题。`
+    : '我使用清晰、可复现的方法探索重要的研究问题。'
+  : interests.length
+    ? `I work across ${interests.slice(0,2).join(' and ')}, using clear, reproducible methods to understand complex problems.`
+    : 'I use clear, reproducible methods to investigate important research questions.';
 ---
 <BaseLayout {locale}>
   <div data-pagefind-body>
@@ -26,14 +33,14 @@ const interests = site.researchInterests;
   <section class="statement section">
     <div class="container statement-grid">
       <p class="eyebrow" data-reveal="fade">{locale === 'zh' ? '研究者简介' : 'Introduction'}</p>
-      <p class="statement-text" data-reveal="fade-up">{locale === 'zh' ? `我关注${interests.slice(0,2).join('、')}，并尝试用清晰、可复现的方法理解复杂问题。` : `I work across ${interests.slice(0,2).join(' and ')}, using clear, reproducible methods to understand complex problems.`}</p>
+      <p class="statement-text" data-reveal="fade-up">{introduction}</p>
       <a class="text-link" href={getLocalizedPath(locale,'/about/')} data-reveal="fade">{locale === 'zh' ? '了解更多' : 'Read more'}</a>
     </div>
   </section>
-  <section class="interests section">
+  {interests.length > 0 && <section class="interests section">
     <div class="container"><SectionHeader eyebrow={locale==='zh'?'方向':'Focus'} title={locale==='zh'?'研究兴趣':'Research interests'} /></div>
     <div class="interest-list container">{interests.map((interest,index)=><div data-reveal="fade-up"><span>{String(index+1).padStart(2,'0')}</span><h3>{interest}</h3></div>)}</div>
-  </section>
+  </section>}
   {projects.length>0 && <section class="section featured"><div class="container"><SectionHeader eyebrow={locale==='zh'?'研究':'Research'} title={locale==='zh'?'重点研究':'Featured research'} link={getLocalizedPath(locale,'/projects/')} linkLabel={locale==='zh'?'全部项目':'All projects'} /><div class="project-flow">{projects.map((project,index)=><ProjectCard {project} {locale} {index} />)}</div></div></section>}
   {publications.length>0 && <section class="section"><div class="container"><SectionHeader eyebrow={locale==='zh'?'成果':'Output'} title={locale==='zh'?'代表论文':'Selected publications'} link={getLocalizedPath(locale,'/publications/')} linkLabel={locale==='zh'?'全部论文':'All publications'} />{publications.map((publication)=><PublicationCard {publication} {locale} />)}</div></section>}
   {news.length>0 && <section class="section soft"><div class="container narrow-shift"><SectionHeader eyebrow={locale==='zh'?'动态':'Updates'} title={locale==='zh'?'最新动态':'Latest news'} link={getLocalizedPath(locale,'/news/')} linkLabel={locale==='zh'?'全部动态':'All news'} /><NewsList items={news} {locale} /></div></section>}
