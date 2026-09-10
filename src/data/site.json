@@ -1,45 +1,68 @@
 {
-  "siteName": "Your Name — Academic Profile",
-  "name": "Your Name",
-  "nameEn": "Your Name",
-  "title": "研究者 · 你的研究领域",
-  "titleEn": "Researcher · Your Field",
-  "bio": "在这里用一句简洁的话说明你的研究关注什么，以及它为何重要。",
-  "bioEn": "Describe, in one clear sentence, what you study and why it matters.",
-  "description": "Your Name 的个人学术主页：研究、论文、项目与写作。",
-  "descriptionEn": "The academic website of Your Name: research, publications, projects, and writing.",
-  "email": "",
-  "location": "",
-  "institution": "Your Institution",
-  "institutionEn": "Your Institution",
-  "avatar": "/uploads/profile-placeholder.svg",
+  "siteName": "Your Name — LiChang",
+  "name": "李畅",
+  "nameEn": "Kyle",
+  "title": "多智能体仿真，强化学习，计算机图形学，群体智能",
+  "titleEn": "Multi-agent simulation, reinforcement learning, computer graphics, swarm intelligence",
+  "bio": "多智能体仿真、强化学习、计算机图形学与群体智能的交叉研究，旨在**理解、建模并重现复杂群体的交互与涌现规律，为大规模智能体在虚拟与现实环境中的自主决策、协同演化和可信仿真提供基础支撑。",
+  "bioEn": "Research at the intersection of multi-agent simulation, reinforcement learning, computer graphics, and swarm intelligence is crucial for **understanding, modeling, and reproducing complex group interactions and emergent behaviors, while providing a foundation for autonomous decision-making, coordinated evolution, and realistic large-scale simulation of intelligent agents in both virtual and real-world environments.**",
+  "description": "李畅的个人学术主页：研究、论文、项目、写作和随笔。",
+  "descriptionEn": "LiChang’s personal academic website: research, publications, projects, writing, and reflections.",
+  "email": "it_changli@gs.zzu.edu.cn",
+  "location": "Zhengzhou, Henan Province, China",
+  "institution": "郑州大学",
+  "institutionEn": "Zhengzhou University",
+  "avatar": "/uploads/2026091017175483222.jpg",
   "cv": "/cv/cv.pdf",
-  "github": "",
-  "googleScholar": "",
-  "orcid": "",
-  "linkedin": "",
-  "otherLinks": [],
-  "researchInterests": ["研究方向一", "研究方向二", "Research direction three"],
-  "navigation": [
-    { "key": "about", "zh": "关于", "en": "About" },
-    { "key": "research", "zh": "研究", "en": "Research" },
-    { "key": "publications", "zh": "论文", "en": "Publications" },
-    { "key": "projects", "zh": "项目", "en": "Projects" },
-    { "key": "blog", "zh": "博客", "en": "Blog" },
-    { "key": "cv", "zh": "履历", "en": "CV" }
+  "github": "https://github.com/kylesteve6866",
+  "researchInterests": [
+    "多智能体仿真",
+    "强化学习",
+    "计算机图形学",
+    "群体智能"
   ],
-  "socialLinks": [],
+  "navigation": [
+    {
+      "key": "about",
+      "zh": "关于",
+      "en": "About"
+    },
+    {
+      "key": "research",
+      "zh": "研究",
+      "en": "Research"
+    },
+    {
+      "key": "publications",
+      "zh": "论文",
+      "en": "Publications"
+    },
+    {
+      "key": "projects",
+      "zh": "项目",
+      "en": "Projects"
+    },
+    {
+      "key": "blog",
+      "zh": "博客",
+      "en": "Blog"
+    },
+    {
+      "key": "cv",
+      "zh": "履历",
+      "en": "CV"
+    }
+  ],
   "defaultLocale": "zh",
   "theme": "system",
-  "deployment": { "siteUrl": "", "basePath": "" },
-  "features": { "comments": false, "liveChat": false, "search": true },
+  "features": {
+    "comments": false,
+    "liveChat": false,
+    "search": true
+  },
   "giscus": {
-    "repo": "",
-    "repoId": "",
     "category": "Announcements",
-    "categoryId": "",
     "mapping": "pathname",
     "lang": "zh-CN"
-  },
-  "tawk": { "propertyId": "", "widgetId": "" }
+  }
 }
