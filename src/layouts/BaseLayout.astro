@@ -1,0 +1,55 @@
+---
+import '@/styles/global.css';
+import Navbar from '@/components/Navbar.astro';
+import Footer from '@/components/Footer.astro';
+import LiveChat from '@/components/LiveChat.astro';
+import BackToTop from '@/components/BackToTop.astro';
+import SEO from '@/components/SEO.astro';
+import type { Locale } from '@/types';
+
+interface Props {
+  title?: string;
+  description?: string;
+  locale?: Locale;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  updatedTime?: Date;
+  noindex?: boolean;
+  translationPath?: string;
+  canonicalOverride?: string;
+}
+
+const {
+  title, description, locale = 'zh', image, type = 'website', publishedTime, updatedTime, noindex = false, translationPath, canonicalOverride
+} = Astro.props;
+---
+<!doctype html>
+<html lang={locale === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <script is:inline>document.documentElement.classList.add('js');try{const t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch{}</script>
+    <SEO {...{ title, description, locale, image, type, publishedTime, updatedTime, noindex, translationPath, canonicalOverride }} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">{locale === 'zh' ? '跳到主要内容' : 'Skip to content'}</a>
+    <Navbar {locale} alternatePath={translationPath} />
+    <main id="main-content"><slot /></main>
+    <Footer {locale} />
+    <BackToTop {locale} />
+    <LiveChat />
+    <script>
+      const reveal = () => {
+        const els = document.querySelectorAll<HTMLElement>('[data-reveal]');
+        if (!('IntersectionObserver' in window)) { els.forEach((el) => el.classList.add('is-revealed')); return; }
+        const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+          if (entry.isIntersecting) { entry.target.classList.add('is-revealed'); observer.unobserve(entry.target); }
+        }), { threshold: .12, rootMargin: '0px 0px -5% 0px' });
+        els.forEach((el) => observer.observe(el));
+      };
+      reveal(); document.addEventListener('astro:after-swap', reveal);
+    </script>
+  </body>
+</html>

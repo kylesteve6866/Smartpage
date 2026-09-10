@@ -1,0 +1,5 @@
+---
+import { getCollection } from 'astro:content';import BlogIndex from '@/components/BlogIndex.astro';import { isPublished } from '@/utils/content';
+export async function getStaticPaths(){const tags=[...new Set((await getCollection('blog')).filter((x)=>x.data.locale==='en'&&isPublished(x)).flatMap((x)=>x.data.tags))];return tags.map((tag)=>({params:{tag},props:{tag}}));}const {tag}=Astro.props;
+---
+<BlogIndex locale="en" {tag}/>

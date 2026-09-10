@@ -1,0 +1,9 @@
+---
+import type { Locale } from '@/types';
+interface Props { title: string; locale: Locale }
+const { title, locale } = Astro.props;
+const url = Astro.url.href;
+---
+<div class="share" data-pagefind-ignore><span>{locale === 'zh' ? '分享' : 'Share'}</span><a href={`https://x.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`} target="_blank" rel="noopener">X</a><a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`} target="_blank" rel="noopener">LinkedIn</a><button type="button" data-copy-url data-label={locale === 'zh' ? '复制链接' : 'Copy link'} data-copied={locale === 'zh' ? '已复制' : 'Copied'}>{locale === 'zh' ? '复制链接' : 'Copy link'}</button></div>
+<script>document.querySelectorAll<HTMLButtonElement>('[data-copy-url]').forEach((b)=>{if(b.dataset.ready)return;b.dataset.ready='1';b.addEventListener('click',async()=>{await navigator.clipboard.writeText(location.href);b.textContent=b.dataset.copied??'Copied';setTimeout(()=>b.textContent=b.dataset.label??'Copy link',1600);});});</script>
+<style>.share{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem;padding:1.5rem 0;border-block:1px solid var(--color-line);font-size:var(--text-sm)}.share span{margin-right:auto;color:var(--color-muted)}.share a,.share button{border:0;background:none;color:var(--color-accent-strong);font-weight:650;text-decoration:none;cursor:pointer}</style>

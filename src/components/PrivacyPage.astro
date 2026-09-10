@@ -1,0 +1,12 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import type { Locale } from '@/types';
+interface Props { locale: Locale }
+const { locale }=Astro.props;
+---
+<BaseLayout title={locale==='zh'?'隐私':'Privacy'} description={locale==='zh'?'本站的隐私说明。':'Privacy information for this website.'} {locale}>
+  <header class="page-head"><div class="container"><p class="eyebrow">{locale==='zh'?'说明':'Notice'}</p><h1>{locale==='zh'?'隐私':'Privacy'}</h1></div></header>
+  <article class="copy-container section prose" data-pagefind-body>
+    {locale==='zh'?<><p>本站是静态网站，默认不设置非必要追踪，也不使用广告或分析服务。</p><h2>第三方服务</h2><p>启用 Giscus 评论后，评论区域会连接 GitHub。启用 tawk.to 在线聊天后，页面会连接 tawk.to。两项功能都由站点配置控制，且在线聊天默认关闭。</p><h2>外部链接</h2><p>访问外部学术平台或社交链接时，将适用对应服务的隐私政策。</p></>:<><p>This is a static website. It does not use advertising, analytics, or unnecessary tracking by default.</p><h2>Third-party services</h2><p>When Giscus comments are enabled, the comments area connects to GitHub. When tawk.to live chat is enabled, the page connects to tawk.to. Both features are configuration-controlled, and live chat is disabled by default.</p><h2>External links</h2><p>External academic and social platforms are governed by their own privacy policies.</p></>}
+  </article>
+</BaseLayout>

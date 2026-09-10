@@ -1,0 +1,9 @@
+---
+import type { Locale } from '@/types';
+import { getLocalizedPath, switchLocalePath } from '@/utils/urls';
+interface Props { locale: Locale; alternatePath?: string }
+const { locale, alternatePath } = Astro.props;
+const next = locale === 'zh' ? 'en' : 'zh';
+---
+<a class="language" href={alternatePath ? getLocalizedPath(next, alternatePath) : switchLocalePath(Astro.url.pathname, next)} hreflang={next === 'zh' ? 'zh-CN' : 'en'} aria-label={locale === 'zh' ? 'Switch to English' : '切换到中文'}>{next === 'zh' ? '中' : 'EN'}</a>
+<style>.language{display:grid;place-items:center;min-width:2.4rem;min-height:2.4rem;border-radius:999px;font-size:.78rem;font-weight:700;text-decoration:none}.language:hover{background:var(--color-accent-soft)}</style>

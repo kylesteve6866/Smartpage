@@ -1,0 +1,23 @@
+---
+import type { MarkdownHeading } from 'astro';
+import type { Locale } from '@/types';
+interface Props { headings: MarkdownHeading[]; locale: Locale }
+const { headings, locale } = Astro.props;
+const visible = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+{visible.length > 0 && (
+  <nav class="toc" aria-label={locale === 'zh' ? '文章目录' : 'Table of contents'}>
+    <p>{locale === 'zh' ? '目录' : 'On this page'}</p>
+    <ol>{visible.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+  </nav>
+)}
+<style>
+  .toc { position: sticky; top: calc(var(--nav-height) + 2rem); font-size: var(--text-sm); }
+  .toc > p { margin: 0 0 .8rem; font-weight: 700; }
+  .toc ol { margin: 0; padding: 0; list-style: none; }
+  .toc li { margin: .45rem 0; }
+  .toc .depth-3 { padding-left: .8rem; }
+  .toc a { color: var(--color-muted); text-decoration: none; }
+  .toc a:hover { color: var(--color-text); }
+  @media (max-width: 1000px) { .toc { position: static; padding: 1rem 0 2rem; border-bottom: 1px solid var(--color-line); } }
+</style>

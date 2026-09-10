@@ -1,0 +1,14 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '@/types';
+import { assetUrl, getLocalizedPath } from '@/utils/urls';
+import { formatDate, getReadingTime } from '@/utils/content';
+interface Props { post: CollectionEntry<'blog'>; locale: Locale; horizontal?: boolean }
+const { post, locale, horizontal = false } = Astro.props;
+const mins = post.data.readingTime ?? getReadingTime(post.body, locale);
+---
+<article class:list={['blog-card', { horizontal }]} data-reveal="fade-up">
+  {post.data.cover && <a class="cover" href={getLocalizedPath(locale, `/blog/${post.data.slug}/`)} tabindex="-1"><img src={assetUrl(post.data.cover)} alt={post.data.coverAlt} width="1200" height="720" loading="lazy" /></a>}
+  <div class="card-body"><div class="meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, locale)}</time><span>·</span><span>{mins} {locale === 'zh' ? '分钟阅读' : 'min read'}</span></div><h3><a href={getLocalizedPath(locale, `/blog/${post.data.slug}/`)}>{post.data.title}</a></h3><p>{post.data.description}</p><div class="tags">{post.data.tags.slice(0,3).map((tag)=><a class="chip" href={getLocalizedPath(locale, `/blog/tags/${encodeURIComponent(tag)}/`)}>{tag}</a>)}</div></div>
+</article>
+<style>.blog-card{display:flex;flex-direction:column;border-top:1px solid var(--color-line);padding-top:1.25rem}.cover{display:block;overflow:hidden;aspect-ratio:5/3;margin-bottom:1.3rem;border-radius:var(--radius-md);background:var(--color-surface)}.cover img{width:100%;height:100%;object-fit:cover;transition:transform var(--transition-base)}.cover:hover img{transform:scale(1.015)}.meta{display:flex;flex-wrap:wrap;gap:.4rem}.blog-card h3{margin:.7rem 0 .45rem;font-size:var(--text-xl);line-height:1.18;letter-spacing:-.035em}.blog-card h3 a{text-decoration:none}.blog-card p{margin:0;color:var(--color-muted)}.tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1.1rem}.horizontal{display:grid;grid-template-columns:minmax(14rem,.75fr) 1fr;gap:2rem}.horizontal .cover{margin:0}@media(max-width:620px){.horizontal{grid-template-columns:1fr}}</style>

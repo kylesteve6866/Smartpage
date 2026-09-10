@@ -1,0 +1,16 @@
+---
+import site from '@/data/site.json';
+import type { Locale } from '@/types';
+interface Props { locale: Locale; term?: string }
+const { locale, term } = Astro.props;
+const g = site.giscus;
+const enabled = site.features.comments && g.repo && g.repoId && g.category && g.categoryId;
+---
+{enabled && <section class="comments" aria-label={locale === 'zh' ? '评论' : 'Comments'} data-pagefind-ignore>
+  <h2>{locale === 'zh' ? '讨论' : 'Discussion'}</h2><div class="giscus-host" data-term={term}></div>
+  <script is:inline define:vars={{ g, locale, term }}>
+    const resolvedTheme=()=>document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';const loadGiscus=()=>{const host=document.querySelector('.giscus-host');if(!host||host.dataset.loaded)return;host.dataset.loaded='1';const s=document.createElement('script');Object.assign(s,{src:'https://giscus.app/client.js',async:true,crossOrigin:'anonymous'});const attrs={repo:g.repo,'repo-id':g.repoId,category:g.category,'category-id':g.categoryId,mapping:term?'specific':g.mapping,term:term||'',strict:'0','reactions-enabled':'1','emit-metadata':'0','input-position':'top',theme:resolvedTheme(),lang:locale==='zh'?'zh-CN':'en',loading:'lazy'};for(const [k,v] of Object.entries(attrs))s.setAttribute(`data-${k}`,String(v));host.appendChild(s);};const syncTheme=()=>{const frame=document.querySelector('iframe.giscus-frame');if(frame)frame.contentWindow.postMessage({giscus:{setConfig:{theme:resolvedTheme()}}},'https://giscus.app');};loadGiscus();document.addEventListener('themechange',syncTheme);matchMedia('(prefers-color-scheme: dark)').addEventListener('change',syncTheme);
+  </script>
+</section>}
+{import.meta.env.DEV && site.features.comments && !enabled && <p class="config-note">Giscus is enabled but its public IDs are incomplete.</p>}
+<style>.comments{margin-top:4rem}.comments h2{font-size:var(--text-xl);letter-spacing:-.03em}.config-note{padding:1rem;border:1px dashed var(--color-line);color:var(--color-muted);font-size:var(--text-sm)}</style>

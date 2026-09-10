@@ -1,0 +1,14 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Guestbook from './Guestbook.astro';
+import site from '@/data/site.json';
+import type { Locale } from '@/types';
+interface Props { locale: Locale }
+const { locale }=Astro.props;
+const links=[{label:'Email',url:site.email?`mailto:${site.email}`:''},{label:'GitHub',url:site.github},{label:'Google Scholar',url:site.googleScholar},{label:'ORCID',url:site.orcid},{label:'LinkedIn',url:site.linkedin},...site.otherLinks].filter((x)=>x.url);
+---
+<BaseLayout title={locale==='zh'?'联系':'Contact'} description={locale==='zh'?'学术交流与合作联系方式。':'Contact details for academic conversation and collaboration.'} {locale}>
+  <header class="page-head"><div class="container"><p class="eyebrow">{locale==='zh'?'保持联系':'Stay in touch'}</p><h1>{locale==='zh'?'联系':'Contact'}</h1><p>{locale==='zh'?'欢迎就研究、合作与学术交流来信。':'For research, collaboration, or academic conversation.'}</p></div></header>
+  <section class="section container" data-pagefind-body><div class="contact-grid"><h2>{locale==='zh'?'联系方式':'Find me'}</h2><div>{links.length?links.map((link)=><a href={link.url} target={link.url.startsWith('mailto:')?undefined:'_blank'} rel="noopener"><span>{link.label}</span><span aria-hidden="true">↗</span></a>):<p class="empty-state">{locale==='zh'?'请在站点设置中填写联系方式。':'Add your contact details in Site Settings.'}</p>}</div></div><Guestbook {locale}/></section>
+</BaseLayout>
+<style>.contact-grid{display:grid;grid-template-columns:minmax(12rem,.6fr) 1fr;gap:3rem}.contact-grid h2{margin:0;font-size:var(--text-2xl);letter-spacing:-.04em}.contact-grid a{display:flex;justify-content:space-between;padding:1rem 0;border-top:1px solid var(--color-line);font-size:var(--text-lg);text-decoration:none}@media(max-width:680px){.contact-grid{grid-template-columns:1fr}}</style>

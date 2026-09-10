@@ -1,0 +1,32 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import TableOfContents from './TableOfContents.astro';
+import ShareButtons from './ShareButtons.astro';
+import BlogCard from './BlogCard.astro';
+import Comments from './Comments.astro';
+import type { Locale } from '@/types';
+import { assetUrl, getLocalizedPath } from '@/utils/urls';
+import { formatDate, getReadingTime, getRelatedPosts, isPublished } from '@/utils/content';
+interface Props { post: CollectionEntry<'blog'>; locale: Locale }
+const { post, locale }=Astro.props;
+const all=(await getCollection('blog')).filter(isPublished);
+const localized=all.filter((x)=>x.data.locale===locale).sort((a,b)=>a.data.date.getTime()-b.data.date.getTime());
+const index=localized.findIndex((x)=>x.id===post.id);const previous=localized[index-1];const next=localized[index+1];
+const related=getRelatedPosts(post,all);const { Content, headings }=await render(post);
+const mins=post.data.readingTime??getReadingTime(post.body,locale);
+const translated=post.data.translationKey?all.find((x)=>x.data.translationKey===post.data.translationKey&&x.data.locale!==locale):undefined;
+const alternatePath=translated?`/blog/${translated.data.slug}/`:'/';
+---
+<BaseLayout title={post.data.title} description={post.data.description} {locale} image={post.data.ogImage||post.data.cover} type="article" publishedTime={post.data.date} updatedTime={post.data.updated} translationPath={alternatePath} canonicalOverride={post.data.canonical||undefined}>
+  <article data-pagefind-body>
+    <header class="article-head copy-container"><div class="meta"><span>{post.data.category}</span><span>·</span><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date,locale)}</time><span>·</span><span>{mins} {locale==='zh'?'分钟阅读':'min read'}</span></div><h1>{post.data.title}</h1><p>{post.data.description}</p>{post.data.updated&&<small>{locale==='zh'?'更新于':'Updated'} {formatDate(post.data.updated,locale)}</small>}</header>
+    {post.data.cover&&<figure class="article-cover container"><img src={assetUrl(post.data.cover)} alt={post.data.coverAlt} width="1600" height="900" /></figure>}
+    <div class="article-shell container"><aside><TableOfContents {headings} {locale}/></aside><div class="article-main"><div class="prose"><Content /></div><ShareButtons title={post.data.title} {locale}/><nav class="post-nav" aria-label={locale==='zh'?'文章导航':'Post navigation'}>{previous?<a href={getLocalizedPath(locale,`/blog/${previous.data.slug}/`)}><span>{locale==='zh'?'上一篇':'Previous'}</span><strong>{previous.data.title}</strong></a>:<span></span>}{next&&<a class="next" href={getLocalizedPath(locale,`/blog/${next.data.slug}/`)}><span>{locale==='zh'?'下一篇':'Next'}</span><strong>{next.data.title}</strong></a>}</nav><Comments {locale}/></div></div>
+  </article>
+  {related.length>0&&<section class="section related container"><h2>{locale==='zh'?'相关文章':'Related writing'}</h2><div>{related.map((item)=><BlogCard post={item} {locale}/>)}</div></section>}
+</BaseLayout>
+<script>
+  document.querySelectorAll<HTMLElement>('.prose pre').forEach((pre)=>{const button=document.createElement('button');button.type='button';button.className='code-copy';button.textContent='Copy';button.addEventListener('click',async()=>{await navigator.clipboard.writeText(pre.querySelector('code')?.textContent??'');button.textContent='Copied';setTimeout(()=>button.textContent='Copy',1200);});pre.appendChild(button);});
+</script>
+<style>.article-head{padding-top:clamp(8rem,16vw,12rem);padding-bottom:4rem;text-align:center}.article-head .meta{display:flex;justify-content:center;flex-wrap:wrap;gap:.45rem}.article-head h1{margin:1.2rem auto;max-width:13ch;font-size:clamp(2.8rem,7vw,6.8rem);line-height:1;letter-spacing:-.055em}.article-head>p{max-width:40rem;margin:0 auto;color:var(--color-muted);font-size:var(--text-lg)}.article-head small{display:block;margin-top:1rem;color:var(--color-faint)}.article-cover{overflow:hidden;max-height:70vh;border-radius:var(--radius-lg)}.article-cover img{width:100%;height:100%;object-fit:cover}.article-shell{display:grid;grid-template-columns:13rem minmax(0,var(--container-copy)) 1fr;gap:clamp(2rem,5vw,5rem);padding-block:5rem}.article-main{grid-column:2}.post-nav{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2.5rem}.post-nav a{display:flex;flex-direction:column;padding:1rem 0;border-top:1px solid var(--color-line);text-decoration:none}.post-nav span{color:var(--color-faint);font-size:var(--text-xs)}.post-nav .next{text-align:right}.related{border-top:1px solid var(--color-line)}.related>h2{font-size:var(--text-2xl);letter-spacing:-.04em}.related>div{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}:global(.code-copy){position:absolute;top:.5rem;right:.5rem;padding:.3rem .55rem;border:1px solid var(--color-line);border-radius:.35rem;background:var(--color-surface);color:var(--color-muted);font-size:.7rem;cursor:pointer}@media(max-width:1000px){.article-shell{grid-template-columns:1fr;width:min(calc(100% - 2rem),var(--container-copy))}.article-shell aside,.article-main{grid-column:1}.related>div{grid-template-columns:1fr}}@media(max-width:600px){.post-nav{grid-template-columns:1fr}.post-nav .next{text-align:left}}</style>

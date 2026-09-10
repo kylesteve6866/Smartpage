@@ -1,0 +1,5 @@
+---
+import { getCollection } from 'astro:content';import BlogIndex from '@/components/BlogIndex.astro';import { isPublished } from '@/utils/content';
+export async function getStaticPaths(){const categories=[...new Set((await getCollection('blog')).filter((x)=>x.data.locale==='en'&&isPublished(x)).map((x)=>x.data.category))];return categories.map((category)=>({params:{category},props:{category}}));}const {category}=Astro.props;
+---
+<BlogIndex locale="en" {category}/>

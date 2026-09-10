@@ -1,0 +1,47 @@
+---
+import site from '@/data/site.json';
+import { assetUrl, getLocalizedPath, stripBase } from '@/utils/urls';
+import type { Locale } from '@/types';
+
+interface Props { title?: string; description?: string; locale: Locale; image?: string; type?: 'website'|'article'; publishedTime?: Date; updatedTime?: Date; noindex?: boolean; translationPath?: string; canonicalOverride?: string; }
+const { title, description, locale, image, type = 'website', publishedTime, updatedTime, noindex, translationPath, canonicalOverride } = Astro.props;
+const pageTitle = title ? `${title} — ${locale === 'zh' ? site.name : site.nameEn}` : site.siteName;
+const pageDescription = description ?? (locale === 'zh' ? site.description : site.descriptionEn);
+const canonical = canonicalOverride ? new URL(canonicalOverride, Astro.site) : new URL(Astro.url.pathname, Astro.site);
+const currentPath = stripBase(Astro.url.pathname).replace(/^\/en(?=\/|$)/, '') || '/';
+const alternatePath = translationPath ?? currentPath;
+const zhUrl = new URL(getLocalizedPath('zh', locale === 'zh' ? currentPath : alternatePath), Astro.site);
+const enUrl = new URL(getLocalizedPath('en', locale === 'en' ? currentPath : alternatePath), Astro.site);
+const imageUrl = image ? new URL(assetUrl(image) ?? image, Astro.site) : undefined;
+const schema = type === 'article' ? {
+  '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title, description: pageDescription,
+  datePublished: publishedTime?.toISOString(), dateModified: updatedTime?.toISOString() ?? publishedTime?.toISOString(),
+  author: { '@type': 'Person', name: site.nameEn }, mainEntityOfPage: canonical.href
+} : {
+  '@context': 'https://schema.org', '@type': 'Person', name: site.nameEn, alternateName: site.name,
+  url: new URL(import.meta.env.BASE_URL, Astro.site).href, affiliation: site.institutionEn ? { '@type': 'Organization', name: site.institutionEn } : undefined,
+  sameAs: [site.github, site.googleScholar, site.orcid, site.linkedin].filter(Boolean)
+};
+---
+<title>{pageTitle}</title>
+<meta name="description" content={pageDescription} />
+{noindex && <meta name="robots" content="noindex,nofollow" />}
+<link rel="canonical" href={canonical} />
+<link rel="alternate" hreflang="zh-CN" href={zhUrl} />
+<link rel="alternate" hreflang="en" href={enUrl} />
+<link rel="alternate" hreflang="x-default" href={zhUrl} />
+<link rel="icon" href={assetUrl('/favicon.svg')} type="image/svg+xml" />
+<link rel="alternate" type="application/rss+xml" title={site.siteName} href={assetUrl(locale === 'en' ? '/en/rss.xml' : '/rss.xml')} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={pageDescription} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={locale === 'zh' ? 'zh_CN' : 'en_US'} />
+{imageUrl && <meta property="og:image" content={imageUrl} />}
+{type === 'article' && publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+{type === 'article' && updatedTime && <meta property="article:modified_time" content={updatedTime.toISOString()} />}
+<meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={pageDescription} />
+{imageUrl && <meta name="twitter:image" content={imageUrl} />}
+<script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />

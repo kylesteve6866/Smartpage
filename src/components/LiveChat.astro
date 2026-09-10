@@ -1,0 +1,7 @@
+---
+import site from '@/data/site.json';
+const enabled = site.features.liveChat && site.tawk.propertyId && site.tawk.widgetId;
+---
+{enabled && <script is:inline define:vars={{ propertyId: site.tawk.propertyId, widgetId: site.tawk.widgetId }}>
+  window.addEventListener('load',()=>{const s=document.createElement('script');s.async=true;s.src=`https://embed.tawk.to/${propertyId}/${widgetId}`;s.setAttribute('charset','UTF-8');s.setAttribute('crossorigin','*');document.body.appendChild(s);},{once:true});
+</script>}

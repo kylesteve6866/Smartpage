@@ -1,0 +1,51 @@
+---
+import site from '@/data/site.json';
+import type { Locale } from '@/types';
+import { getLocalizedPath } from '@/utils/urls';
+import SearchButton from './SearchButton.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import ThemeToggle from './ThemeToggle.astro';
+interface Props { locale: Locale; alternatePath?: string }
+const { locale, alternatePath } = Astro.props;
+---
+<header class="site-header" data-header data-pagefind-ignore>
+  <nav class="nav container" aria-label={locale === 'zh' ? '主导航' : 'Primary navigation'}>
+    <a class="brand" href={getLocalizedPath(locale)} aria-label={locale === 'zh' ? `${site.name} 首页` : `${site.nameEn} home`}>
+      <span>{locale === 'zh' ? site.name : site.nameEn}</span>
+    </a>
+    <div class="desktop-links">
+      {site.navigation.map((item) => <a href={getLocalizedPath(locale, `/${item.key}/`)}>{item[locale]}</a>)}
+    </div>
+    <div class="nav-tools">
+      {site.features.search && <SearchButton {locale} />}
+      <LanguageSwitcher {locale} {alternatePath} />
+      <ThemeToggle {locale} />
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label={locale === 'zh' ? '打开菜单' : 'Open menu'} data-open-label={locale === 'zh' ? '打开菜单' : 'Open menu'} data-close-label={locale === 'zh' ? '关闭菜单' : 'Close menu'}><span></span><span></span></button>
+    </div>
+  </nav>
+  <div id="mobile-menu" class="mobile-menu" hidden>
+    <div class="mobile-inner container">
+      {site.navigation.map((item, index) => <a style={`--i:${index}`} href={getLocalizedPath(locale, `/${item.key}/`)}>{item[locale]}</a>)}
+      <a href={getLocalizedPath(locale, '/contact/')}>{locale === 'zh' ? '联系' : 'Contact'}</a>
+    </div>
+  </div>
+</header>
+<script>
+  const setupNav = () => {
+    const header = document.querySelector<HTMLElement>('[data-header]'); const button = header?.querySelector<HTMLButtonElement>('.menu-toggle'); const menu = header?.querySelector<HTMLElement>('.mobile-menu');
+    if (!header || !button || !menu || button.dataset.ready) return; button.dataset.ready = 'true';
+    const onScroll = () => header.classList.toggle('is-scrolled', scrollY > 12); onScroll(); addEventListener('scroll', onScroll, { passive: true });
+    const close = () => { button.setAttribute('aria-expanded','false'); menu.hidden = true; document.body.classList.remove('menu-open'); button.setAttribute('aria-label', button.dataset.openLabel ?? 'Open menu'); };
+    button.addEventListener('click', () => { const open = button.getAttribute('aria-expanded') === 'true'; if (open) close(); else { button.setAttribute('aria-expanded','true'); button.setAttribute('aria-label',button.dataset.closeLabel??'Close menu'); menu.hidden=false; document.body.classList.add('menu-open'); menu.querySelector<HTMLAnchorElement>('a')?.focus(); } });
+    menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
+    addEventListener('keydown', (event) => { if (event.key === 'Escape' && button.getAttribute('aria-expanded')==='true') { close(); button.focus(); } if(event.key==='Tab'&&button.getAttribute('aria-expanded')==='true'){const focusable=[...menu.querySelectorAll<HTMLAnchorElement>('a')];const first=focusable[0],last=focusable.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}} });
+  };
+  setupNav(); document.addEventListener('astro:after-swap', setupNav);
+</script>
+<style>
+  .site-header{position:fixed;z-index:100;top:0;left:0;width:100%;border-bottom:1px solid transparent;background:color-mix(in srgb,var(--color-bg) 42%,transparent);transition:background var(--transition-base),border-color var(--transition-base),box-shadow var(--transition-base);-webkit-backdrop-filter:saturate(140%) blur(10px);backdrop-filter:saturate(140%) blur(10px)}
+  .site-header.is-scrolled{border-color:var(--color-line);background:color-mix(in srgb,var(--color-bg) 83%,transparent);box-shadow:var(--shadow-sm);-webkit-backdrop-filter:saturate(160%) blur(18px);backdrop-filter:saturate(160%) blur(18px)}
+  .nav{height:var(--nav-height);display:flex;align-items:center;gap:1rem}.brand{margin-right:auto;font-weight:720;letter-spacing:-.025em;text-decoration:none;white-space:nowrap}.desktop-links{display:flex;align-items:center;gap:clamp(.65rem,1.5vw,1.45rem)}.desktop-links a{position:relative;color:var(--color-muted);font-size:.82rem;text-decoration:none}.desktop-links a:hover{color:var(--color-text)}.nav-tools{display:flex;align-items:center;gap:.1rem;margin-left:1rem}.menu-toggle{display:none;width:2.55rem;height:2.55rem;padding:.7rem;border:0;border-radius:50%;background:transparent;cursor:pointer}.menu-toggle span{display:block;width:100%;height:1px;margin:.3rem 0;background:currentColor;transition:transform var(--transition-fast)}.menu-toggle[aria-expanded="true"] span:first-child{transform:translateY(.2rem) rotate(45deg)}.menu-toggle[aria-expanded="true"] span:last-child{transform:translateY(-.2rem) rotate(-45deg)}
+  .mobile-menu{position:fixed;inset:var(--nav-height) 0 0;background:color-mix(in srgb,var(--color-bg) 96%,transparent);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}.mobile-inner{display:flex;flex-direction:column;padding-block:2rem}.mobile-inner a{padding:1rem 0;border-bottom:1px solid var(--color-line);font-size:clamp(1.5rem,8vw,2.4rem);font-weight:650;letter-spacing:-.04em;text-decoration:none;animation:enter .35s both;animation-delay:calc(var(--i,0) * 35ms)}@keyframes enter{from{opacity:0;transform:translateY(10px)}}
+  @media(max-width:900px){.desktop-links{display:none}.menu-toggle{display:block}.nav-tools{margin-left:0}}
+</style>

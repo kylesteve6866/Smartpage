@@ -1,0 +1,18 @@
+---
+import type { Locale } from '@/types';
+import { normalizeBase } from '@/utils/urls';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+---
+<div class="search-app" data-locale={locale} data-base={normalizeBase()}>
+  <label for="site-search">{locale === 'zh' ? '搜索文章、项目、论文和页面' : 'Search articles, projects, publications, and pages'}</label>
+  <div class="search-field"><span aria-hidden="true">⌕</span><input id="site-search" type="search" autocomplete="off" placeholder={locale === 'zh' ? '输入关键词…' : 'Type a keyword…'} /></div>
+  <p class="search-status" aria-live="polite"></p><div class="search-results"></div>
+</div>
+<script>
+  interface SearchData { url:string; excerpt:string; meta:{title?:string}; }
+  const setupSearch=()=>{const app=document.querySelector<HTMLElement>('.search-app');const input=app?.querySelector<HTMLInputElement>('input');const output=app?.querySelector<HTMLElement>('.search-results');const status=app?.querySelector<HTMLElement>('.search-status');if(!app||!input||!output||!status||input.dataset.ready)return;input.dataset.ready='1';let timer:number;
+    const escapeHtml=(value:string)=>value.replace(/[&<>'"]/g,(character)=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[character]??character));
+    const run=()=>{clearTimeout(timer);timer=window.setTimeout(async()=>{const q=input.value.trim();if(!q){output.innerHTML='';status.textContent='';return;}status.textContent=app.dataset.locale==='zh'?'正在搜索…':'Searching…';try{const base=app.dataset.base??'';const pf=await import(/* @vite-ignore */`${base}/pagefind/pagefind.js`);await pf.options({baseUrl:`${base}/`});const result=await pf.search(q);const data:SearchData[]=await Promise.all(result.results.slice(0,20).map((r:{data:()=>Promise<SearchData>})=>r.data()));const localePrefix=app.dataset.locale==='en'?`${base}/en/`:`${base}/`;const filtered=data.filter((d)=>app.dataset.locale==='en'?d.url.startsWith(localePrefix):!d.url.startsWith(`${base}/en/`));status.textContent=filtered.length?`${filtered.length} ${app.dataset.locale==='zh'?'条结果':'results'}`:(app.dataset.locale==='zh'?'没有找到匹配内容':'No matching content found');output.innerHTML=filtered.map((d)=>`<article><h2><a href="${escapeHtml(d.url)}">${escapeHtml(d.meta.title??d.url)}</a></h2><p>${d.excerpt}</p></article>`).join('');}catch{status.textContent=app.dataset.locale==='zh'?'开发模式下请先运行生产构建以生成搜索索引。':'Run a production build first to generate the search index.';}},180);};input.addEventListener('input',run);};setupSearch();document.addEventListener('astro:after-swap',setupSearch);
+</script>
+<style>.search-app{max-width:52rem}.search-app>label{display:block;margin-bottom:.8rem;color:var(--color-muted)}.search-field{display:flex;align-items:center;border-bottom:2px solid var(--color-text)}.search-field span{font-size:2rem}.search-field input{width:100%;padding:1rem .6rem;border:0;background:transparent;color:var(--color-text);font-size:var(--text-xl);outline:none}.search-status{min-height:1.7rem;color:var(--color-muted);font-size:var(--text-sm)}.search-results article{padding:1.5rem 0;border-top:1px solid var(--color-line)}.search-results h2{margin:0;font-size:var(--text-lg)}.search-results h2 a{text-decoration:none}.search-results p{margin:.45rem 0 0;color:var(--color-muted)}</style>

@@ -1,0 +1,21 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import type { Locale } from '@/types';
+import { assetUrl } from '@/utils/urls';
+import site from '@/data/site.json';
+import { existsSync } from 'node:fs';
+interface Props { locale: Locale; page: 'about'|'research'|'cv' }
+const { locale, page } = Astro.props;
+const entries = await getCollection('pages');
+const entry = entries.find((x)=>x.data.locale===locale&&x.data.page===page);
+if (!entry) throw new Error(`Missing ${locale}/${page} page content`);
+const { Content } = await render(entry);
+const labels = { about: locale==='zh'?'关于':'About', research: locale==='zh'?'研究':'Research', cv:'CV' };
+const cvHref = site.cv && existsSync(`public${site.cv}`) ? assetUrl(site.cv) : undefined;
+---
+<BaseLayout title={entry.data.title} description={entry.data.description} {locale}>
+  <header class="page-head"><div class="container"><p class="eyebrow">{labels[page]}</p><h1>{entry.data.title}</h1><p>{entry.data.description}</p>{page==='cv'&&cvHref&&<a class="button cv-download" href={cvHref} download>{locale==='zh'?'下载 PDF':'Download PDF'}</a>}</div></header>
+  <article class="copy-container section prose" data-pagefind-body><Content />{page==='cv'&&!cvHref&&<p class="muted"><em>{locale==='zh'?'CV PDF 稍后提供。':'CV PDF will be available soon.'}</em></p>}</article>
+</BaseLayout>
+<style>.cv-download{margin-top:1.5rem}</style>

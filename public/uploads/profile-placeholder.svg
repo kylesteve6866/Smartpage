@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Portrait placeholder</title><desc id="desc">A quiet abstract placeholder to be replaced with a portrait.</desc>
+  <rect width="960" height="1200" fill="#dfecef"/><circle cx="480" cy="420" r="175" fill="#8fb3bd"/><path d="M176 1160c22-300 126-460 304-460s282 160 304 460" fill="#416d79"/><path d="M0 1030 960 720v480H0z" fill="#173d48" opacity=".16"/>
+</svg>

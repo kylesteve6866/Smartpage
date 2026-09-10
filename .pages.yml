@@ -1,0 +1,280 @@
+media:
+  - name: images
+    label: Images
+    input: public/uploads
+    output: /uploads
+    rename: safe
+    categories: [image]
+  - name: documents
+    label: Documents
+    input: public/cv
+    output: /cv
+    rename: safe
+    categories: [document]
+
+settings:
+  content:
+    merge: true
+  commit:
+    identity: user
+    templates:
+      create: "content: create {path}"
+      update: "content: update {path}"
+      delete: "content: delete {path}"
+      rename: "content: rename {oldPath} to {newPath}"
+
+content:
+  - name: site
+    label: Site Settings
+    type: file
+    path: src/data/site.json
+    format: json
+    fields:
+      - { name: siteName, label: Site name, type: string, required: true }
+      - { name: name, label: Chinese name, type: string, required: true }
+      - { name: nameEn, label: English name, type: string, required: true }
+      - { name: title, label: Chinese title, type: string, required: true }
+      - { name: titleEn, label: English title, type: string, required: true }
+      - { name: bio, label: Chinese short bio, type: text, required: true }
+      - { name: bioEn, label: English short bio, type: text, required: true }
+      - { name: description, label: Chinese SEO description, type: text, required: true }
+      - { name: descriptionEn, label: English SEO description, type: text, required: true }
+      - { name: email, label: Email, type: string }
+      - { name: location, label: Location, type: string }
+      - { name: institution, label: Institution (Chinese), type: string }
+      - { name: institutionEn, label: Institution (English), type: string }
+      - name: avatar
+        label: Portrait
+        type: image
+        options: { media: images }
+      - name: cv
+        label: CV PDF
+        type: file
+        options: { media: documents, extensions: [pdf] }
+      - { name: github, label: GitHub URL, type: string }
+      - { name: googleScholar, label: Google Scholar URL, type: string }
+      - { name: orcid, label: ORCID URL, type: string }
+      - { name: linkedin, label: LinkedIn URL, type: string }
+      - { name: researchInterests, label: Research interests, type: string, list: true }
+      - name: deployment
+        label: Deployment overrides
+        type: object
+        description: Leave blank for automatic GitHub Pages owner/repository detection.
+        fields:
+          - { name: siteUrl, label: Custom site URL, type: string }
+          - { name: basePath, label: Custom base path, type: string }
+      - name: otherLinks
+        label: Other links
+        type: object
+        list:
+          collapsible: { collapsed: true, summary: "{label}" }
+        fields:
+          - { name: label, label: Label, type: string, required: true }
+          - { name: url, label: URL, type: string, required: true }
+      - name: features
+        label: Features
+        type: object
+        fields:
+          - { name: comments, label: Enable Giscus comments, type: boolean, default: false }
+          - { name: liveChat, label: Enable tawk.to live chat, type: boolean, default: false }
+          - { name: search, label: Enable search, type: boolean, default: true }
+      - name: giscus
+        label: Giscus public configuration
+        type: object
+        fields:
+          - { name: repo, label: Repository (owner/repo), type: string }
+          - { name: repoId, label: Repository ID, type: string }
+          - { name: category, label: Discussion category, type: string }
+          - { name: categoryId, label: Category ID, type: string }
+          - name: mapping
+            label: Mapping
+            type: select
+            options: { values: [pathname, url, title, og:title] }
+          - { name: lang, label: Default language, type: string }
+      - name: tawk
+        label: tawk.to public configuration
+        type: object
+        fields:
+          - { name: propertyId, label: Property ID, type: string }
+          - { name: widgetId, label: Widget ID, type: string }
+
+  - name: pages
+    label: About / Research / CV
+    type: collection
+    path: src/content/pages
+    format: yaml-frontmatter
+    subfolders: false
+    operations: { create: false, delete: false }
+    view:
+      fields: [title, locale, page]
+      primary: title
+      sort: [page, locale]
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: description, label: Description, type: text, required: true }
+      - name: locale
+        label: Language
+        type: select
+        required: true
+        options: { values: [{ name: zh, label: Chinese }, { name: en, label: English }] }
+      - name: page
+        label: Page
+        type: select
+        required: true
+        options: { values: [about, research, cv] }
+      - name: body
+        label: Content
+        type: rich-text
+        options: { format: markdown, media: images, switcher: true }
+
+  - name: blog
+    label: Blog
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+    subfolders: false
+    filename: { template: "{slug}.md", field: true }
+    view:
+      fields: [title, locale, date, category, draft, featured]
+      primary: title
+      sort: [date, title]
+      search: [title, description, tags]
+      default: { sort: date, order: desc }
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - name: slug
+        label: URL slug
+        type: string
+        required: true
+        pattern: { regex: "^[a-z0-9]+(?:-[a-z0-9]+)*$", message: "Use lowercase letters, numbers, and hyphens." }
+      - { name: description, label: Summary, type: text, required: true }
+      - { name: date, label: Publish date, type: date, required: true, options: { time: true } }
+      - { name: updated, label: Updated date, type: date, default: "", options: { time: true } }
+      - { name: author, label: Author, type: string, default: Your Name }
+      - { name: cover, label: Cover image, type: image, options: { media: images } }
+      - { name: coverAlt, label: Cover alt text, type: string }
+      - { name: tags, label: Tags, type: string, list: true }
+      - { name: category, label: Category, type: string, default: Notes }
+      - name: locale
+        label: Language
+        type: select
+        required: true
+        options: { values: [{ name: zh, label: Chinese }, { name: en, label: English }] }
+      - { name: translationKey, label: Translation key, type: string, description: Use the same key on both language versions. }
+      - { name: featured, label: Featured, type: boolean, default: false }
+      - { name: draft, label: Draft, type: boolean, default: true }
+      - { name: readingTime, label: Reading time override, type: number }
+      - { name: canonical, label: Canonical URL override, type: string }
+      - { name: ogImage, label: Social image, type: image, options: { media: images } }
+      - name: body
+        label: Article
+        type: rich-text
+        options: { format: markdown, media: images, switcher: true }
+
+  - name: publications
+    label: Publications
+    type: collection
+    path: src/content/publications
+    format: yaml-frontmatter
+    filename: { template: "{slug}.md", field: true }
+    view:
+      fields: [title, year, type, locale, draft, featured]
+      primary: title
+      sort: [year, title]
+      search: [title, authors, venue]
+      default: { sort: year, order: desc }
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: slug, label: URL slug, type: string, required: true, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+      - { name: authors, label: Authors, type: string, list: true, required: true }
+      - { name: venue, label: Venue, type: string }
+      - { name: year, label: Year, type: number, required: true }
+      - { name: volume, label: Volume, type: string }
+      - { name: issue, label: Issue, type: string }
+      - { name: pages, label: Pages, type: string }
+      - { name: doi, label: DOI URL, type: string }
+      - { name: pdf, label: PDF URL, type: string }
+      - { name: code, label: Code URL, type: string }
+      - { name: video, label: Video URL, type: string }
+      - { name: project, label: Project URL, type: string }
+      - { name: bibtex, label: BibTeX, type: code, options: { format: markdown } }
+      - { name: award, label: Award, type: string }
+      - { name: abstract, label: Abstract, type: text }
+      - { name: thumbnail, label: Thumbnail, type: image, options: { media: images } }
+      - name: type
+        label: Type
+        type: select
+        required: true
+        options: { values: [journal, conference, preprint, book, chapter, other] }
+      - { name: featured, label: Featured, type: boolean, default: false }
+      - name: locale
+        label: Language
+        type: select
+        required: true
+        options: { values: [zh, en] }
+      - { name: translationKey, label: Translation key, type: string }
+      - { name: draft, label: Draft, type: boolean, default: true }
+
+  - name: projects
+    label: Projects
+    type: collection
+    path: src/content/projects
+    format: yaml-frontmatter
+    filename: { template: "{slug}.md", field: true }
+    view:
+      fields: [title, locale, date, draft, featured]
+      primary: title
+      sort: [date, title]
+      default: { sort: date, order: desc }
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: slug, label: URL slug, type: string, required: true, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+      - { name: description, label: Description, type: text, required: true }
+      - { name: date, label: Start date, type: date, required: true }
+      - { name: endDate, label: End date, type: date, default: "" }
+      - { name: image, label: Image, type: image, options: { media: images } }
+      - { name: imageAlt, label: Image alt text, type: string }
+      - { name: video, label: Video URL, type: string }
+      - { name: role, label: Role, type: string }
+      - { name: collaborators, label: Collaborators, type: string, list: true }
+      - name: links
+        label: Links
+        type: object
+        list: { collapsible: { collapsed: true, summary: "{label}" } }
+        fields:
+          - { name: label, label: Label, type: string, required: true }
+          - { name: url, label: URL, type: string, required: true }
+      - { name: tags, label: Tags, type: string, list: true }
+      - { name: featured, label: Featured, type: boolean, default: false }
+      - { name: draft, label: Draft, type: boolean, default: true }
+      - { name: locale, label: Language, type: select, required: true, options: { values: [zh, en] } }
+      - { name: translationKey, label: Translation key, type: string }
+      - name: body
+        label: Project details
+        type: rich-text
+        options: { format: markdown, media: images, switcher: true }
+
+  - name: news
+    label: News
+    type: collection
+    path: src/content/news
+    format: yaml-frontmatter
+    filename: { template: "{slug}.md", field: true }
+    view:
+      fields: [title, date, type, locale, draft, featured]
+      primary: title
+      sort: [date, title]
+      default: { sort: date, order: desc }
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: slug, label: URL slug, type: string, required: true, pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+      - { name: date, label: Date, type: date, required: true }
+      - { name: description, label: Description, type: text, required: true }
+      - { name: link, label: Optional link, type: string }
+      - name: type
+        label: Type
+        type: select
+        options: { values: [publication, conference, project, visit, personal, other] }
+      - { name: featured, label: Featured, type: boolean, default: false }
+      - { name: locale, label: Language, type: select, required: true, options: { values: [zh, en] } }
+      - { name: draft, label: Draft, type: boolean, default: true }

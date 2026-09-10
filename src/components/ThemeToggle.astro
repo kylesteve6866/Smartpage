@@ -1,0 +1,31 @@
+---
+import type { Locale } from '@/types';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+---
+<button class="theme-toggle" type="button" aria-label={locale === 'zh' ? '切换颜色主题' : 'Change color theme'} title={locale === 'zh' ? '主题：系统 / 浅色 / 深色' : 'Theme: system / light / dark'}>
+  <span aria-hidden="true" class="theme-icon">◐</span><span class="theme-label">{locale === 'zh' ? '主题' : 'Theme'}</span>
+</button>
+<script>
+  const setupTheme = () => {
+    document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach((button) => {
+      if (button.dataset.ready) return; button.dataset.ready = 'true';
+      const themes = ['system', 'light', 'dark'] as const;
+      const getTheme = () => localStorage.getItem('theme') ?? 'system';
+      const apply = (theme: string) => {
+        if (theme === 'system') delete document.documentElement.dataset.theme;
+        else document.documentElement.dataset.theme = theme;
+        localStorage.setItem('theme', theme);
+        document.dispatchEvent(new CustomEvent('themechange', { detail: theme }));
+      };
+      button.addEventListener('click', () => apply(themes[(themes.indexOf(getTheme() as typeof themes[number]) + 1) % themes.length] ?? 'system'));
+    });
+  };
+  setupTheme(); document.addEventListener('astro:after-swap', setupTheme);
+</script>
+<style>
+  .theme-toggle { display:inline-flex; align-items:center; gap:.42rem; min-height:2.4rem; padding:.45rem .7rem; border:0; border-radius:999px; background:transparent; cursor:pointer; font-size:.82rem; }
+  .theme-toggle:hover { background:var(--color-accent-soft); }
+  .theme-icon { font-size:1.05rem; line-height:1; }
+  @media(max-width:900px){.theme-label{display:none}}
+</style>

@@ -1,0 +1,8 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Search from './Search.astro';
+import type { Locale } from '@/types';
+interface Props { locale: Locale }
+const {locale}=Astro.props;
+---
+<BaseLayout title={locale==='zh'?'搜索':'Search'} description={locale==='zh'?'搜索全站公开内容。':'Search all published site content.'} {locale}><header class="page-head" data-pagefind-ignore><div class="container"><p class="eyebrow">{locale==='zh'?'发现':'Find'}</p><h1>{locale==='zh'?'搜索':'Search'}</h1></div></header><section class="section container" data-pagefind-ignore><Search {locale}/></section></BaseLayout>

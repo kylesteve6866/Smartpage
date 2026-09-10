@@ -1,0 +1,8 @@
+---
+import { getCollection } from 'astro:content';
+import BlogPost from '@/components/BlogPost.astro';
+import { isPublished } from '@/utils/content';
+export async function getStaticPaths(){return (await getCollection('blog')).filter((x)=>x.data.locale==='en'&&isPublished(x)).map((post)=>({params:{slug:post.data.slug},props:{post}}));}
+const {post}=Astro.props;
+---
+<BlogPost {post} locale="en" />

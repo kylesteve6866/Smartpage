@@ -1,0 +1,7 @@
+---
+import Comments from './Comments.astro';
+import type { Locale } from '@/types';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+---
+<div class="guestbook"><Comments {locale} term="guestbook" /></div>

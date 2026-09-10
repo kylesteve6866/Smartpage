@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from './Hero.astro';
+import SectionHeader from './SectionHeader.astro';
+import ProjectCard from './ProjectCard.astro';
+import PublicationCard from './PublicationCard.astro';
+import NewsList from './NewsList.astro';
+import BlogCard from './BlogCard.astro';
+import site from '@/data/site.json';
+import type { Locale } from '@/types';
+import { getLocalizedPath } from '@/utils/urls';
+import { isPublished, sortByDate } from '@/utils/content';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const [projectsRaw, pubsRaw, newsRaw, postsRaw] = await Promise.all([getCollection('projects'),getCollection('publications'),getCollection('news'),getCollection('blog')]);
+const projects = sortByDate(projectsRaw.filter((x)=>x.data.locale===locale&&x.data.featured&&isPublished(x))).slice(0,3);
+const publications = pubsRaw.filter((x)=>x.data.locale===locale&&x.data.featured&&isPublished(x)).sort((a,b)=>b.data.year-a.data.year).slice(0,4);
+const news = sortByDate(newsRaw.filter((x)=>x.data.locale===locale&&isPublished(x))).slice(0,5);
+const posts = sortByDate(postsRaw.filter((x)=>x.data.locale===locale&&isPublished(x))).slice(0,3);
+const interests = site.researchInterests;
+---
+<BaseLayout {locale}>
+  <div data-pagefind-body>
+  <Hero {locale} />
+  <section class="statement section">
+    <div class="container statement-grid">
+      <p class="eyebrow" data-reveal="fade">{locale === 'zh' ? '研究者简介' : 'Introduction'}</p>
+      <p class="statement-text" data-reveal="fade-up">{locale === 'zh' ? `我关注${interests.slice(0,2).join('、')}，并尝试用清晰、可复现的方法理解复杂问题。` : `I work across ${interests.slice(0,2).join(' and ')}, using clear, reproducible methods to understand complex problems.`}</p>
+      <a class="text-link" href={getLocalizedPath(locale,'/about/')} data-reveal="fade">{locale === 'zh' ? '了解更多' : 'Read more'}</a>
+    </div>
+  </section>
+  <section class="interests section">
+    <div class="container"><SectionHeader eyebrow={locale==='zh'?'方向':'Focus'} title={locale==='zh'?'研究兴趣':'Research interests'} /></div>
+    <div class="interest-list container">{interests.map((interest,index)=><div data-reveal="fade-up"><span>{String(index+1).padStart(2,'0')}</span><h3>{interest}</h3></div>)}</div>
+  </section>
+  {projects.length>0 && <section class="section featured"><div class="container"><SectionHeader eyebrow={locale==='zh'?'研究':'Research'} title={locale==='zh'?'重点研究':'Featured research'} link={getLocalizedPath(locale,'/projects/')} linkLabel={locale==='zh'?'全部项目':'All projects'} /><div class="project-flow">{projects.map((project,index)=><ProjectCard {project} {locale} {index} />)}</div></div></section>}
+  {publications.length>0 && <section class="section"><div class="container"><SectionHeader eyebrow={locale==='zh'?'成果':'Output'} title={locale==='zh'?'代表论文':'Selected publications'} link={getLocalizedPath(locale,'/publications/')} linkLabel={locale==='zh'?'全部论文':'All publications'} />{publications.map((publication)=><PublicationCard {publication} {locale} />)}</div></section>}
+  {news.length>0 && <section class="section soft"><div class="container narrow-shift"><SectionHeader eyebrow={locale==='zh'?'动态':'Updates'} title={locale==='zh'?'最新动态':'Latest news'} link={getLocalizedPath(locale,'/news/')} linkLabel={locale==='zh'?'全部动态':'All news'} /><NewsList items={news} {locale} /></div></section>}
+  {posts.length>0 && <section class="section"><div class="container"><SectionHeader eyebrow={locale==='zh'?'写作':'Writing'} title={locale==='zh'?'最近写作':'Latest writing'} link={getLocalizedPath(locale,'/blog/')} linkLabel={locale==='zh'?'全部文章':'All writing'} /><div class="blog-grid">{posts.map((post)=><BlogCard {post} {locale} />)}</div></div></section>}
+  <section class="contact-band section"><div class="container"><p class="eyebrow">{locale==='zh'?'联系':'Contact'}</p><h2>{locale==='zh'?'让严谨的想法，走向更远。':'Let rigorous ideas travel further.'}</h2><a class="button secondary" href={getLocalizedPath(locale,'/contact/')}>{locale==='zh'?'联系方式':'Get in touch'}</a></div></section>
+  </div>
+</BaseLayout>
+<style>
+  .statement{background:var(--color-surface)}.statement-grid{display:grid;grid-template-columns:10rem 1fr;gap:2rem}.statement-text{max-width:32ch;margin:0;font-size:clamp(2rem,4.2vw,4.5rem);font-weight:620;line-height:1.12;letter-spacing:-.045em}.statement-grid>.text-link{grid-column:2}.interests{padding-bottom:0}.interest-list>div{display:grid;grid-template-columns:5rem 1fr;align-items:baseline;padding:1.3rem 0;border-top:1px solid var(--color-line)}.interest-list span{color:var(--color-faint);font-size:var(--text-xs)}.interest-list h3{margin:0;font-size:clamp(1.4rem,3vw,2.7rem);font-weight:560;letter-spacing:-.035em}.featured{background:var(--color-surface)}.project-flow{position:relative}.soft{background:var(--color-accent-soft)}.narrow-shift{display:grid;grid-template-columns:minmax(14rem,.4fr) 1fr;gap:clamp(2rem,7vw,7rem)}.narrow-shift :global(.section-header){display:block}.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}.contact-band h2{max-width:12ch;margin:.5rem 0 2rem;font-size:clamp(2.5rem,6vw,6.5rem);line-height:.98;letter-spacing:-.06em}
+  @media(max-width:760px){.statement-grid,.narrow-shift{grid-template-columns:1fr}.statement-grid>.text-link{grid-column:1}.blog-grid{grid-template-columns:1fr}.interest-list>div{grid-template-columns:3rem 1fr}}
+</style>

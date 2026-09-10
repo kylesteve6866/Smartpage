@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '@/types';
+import site from '@/data/site.json';
+import { assetUrl } from '@/utils/urls';
+interface Props { publication: CollectionEntry<'publications'>; locale: Locale }
+const { publication: pub, locale } = Astro.props;
+const ownNames = new Set([site.name, site.nameEn].filter(Boolean));
+const links = [
+  ['DOI', pub.data.doi], ['PDF', pub.data.pdf], ['Code', pub.data.code], ['Video', pub.data.video], ['Project', pub.data.project]
+].filter(([,url]) => url);
+---
+<article class="publication" data-type={pub.data.type} data-reveal="fade-up">
+  <div class="pub-year">{pub.data.year}</div>
+  <div class="pub-content">{pub.data.thumbnail&&<img class="pub-thumb" src={assetUrl(pub.data.thumbnail)} alt={`${pub.data.title} thumbnail`} width="240" height="160" loading="lazy" />}<p class="pub-type">{pub.data.type}</p><h3>{pub.data.title}</h3><p class="authors">{pub.data.authors.map((author, i) => <>{ownNames.has(author) ? <strong>{author}</strong> : author}{i < pub.data.authors.length - 1 ? ', ' : ''}</>)}</p><p class="venue">{pub.data.venue}{pub.data.volume && `, ${pub.data.volume}`}{pub.data.pages && `, ${pub.data.pages}`}</p>{pub.data.award && <p class="award">{pub.data.award}</p>}{pub.data.abstract && <details class="abstract"><summary>{locale==='zh'?'摘要':'Abstract'}</summary><p>{pub.data.abstract}</p></details>}<div class="pub-actions">{links.map(([label,url])=><a href={url} target="_blank" rel="noopener">{label}</a>)}{pub.data.bibtex && <button class="bibtex-open" type="button" data-bibtex={pub.data.bibtex}>{locale === 'zh' ? '引用' : 'BibTeX'}</button>}</div></div>
+</article>
+<style>.publication{display:grid;grid-template-columns:5rem 1fr;gap:1.5rem;padding:2rem 0;border-top:1px solid var(--color-line)}.pub-year{color:var(--color-faint);font-variant-numeric:tabular-nums}.pub-content{min-width:0}.pub-thumb{float:right;width:9rem;aspect-ratio:3/2;margin:0 0 1rem 1.5rem;border-radius:var(--radius-sm);object-fit:cover}.pub-type{margin:0 0 .4rem;color:var(--color-accent);font-size:var(--text-xs);font-weight:700;text-transform:uppercase}.publication h3{margin:0;font-size:var(--text-lg);line-height:1.35}.authors,.venue{margin:.5rem 0 0;color:var(--color-muted);font-size:var(--text-sm)}.award{display:inline-block;margin:.7rem 0 0;padding:.2rem .55rem;background:var(--color-accent-soft);color:var(--color-accent-strong);font-size:var(--text-xs);font-weight:700}.abstract{margin-top:.8rem;color:var(--color-muted);font-size:var(--text-sm)}.abstract summary{width:max-content;color:var(--color-accent-strong);cursor:pointer;font-weight:650}.abstract p{max-width:60rem}.pub-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}.pub-actions a,.pub-actions button{padding:0;border:0;background:none;color:var(--color-accent-strong);font-size:var(--text-sm);font-weight:650;text-decoration:none;cursor:pointer}@media(max-width:520px){.publication{grid-template-columns:1fr;gap:.4rem}.pub-thumb{float:none;width:100%;max-width:18rem;margin:0 0 1rem}}</style>

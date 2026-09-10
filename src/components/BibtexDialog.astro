@@ -1,0 +1,13 @@
+---
+import type { Locale } from '@/types';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+---
+<dialog class="bib-dialog" aria-labelledby="bib-dialog-title"><form method="dialog"><div class="dialog-head"><h2 id="bib-dialog-title">BibTeX</h2><button value="close" aria-label={locale==='zh'?'关闭':'Close'}>×</button></div><pre><code></code></pre><button class="button copy-bib" type="button">{locale==='zh'?'复制 BibTeX':'Copy BibTeX'}</button></form></dialog>
+<script>
+  const dialog=document.querySelector<HTMLDialogElement>('.bib-dialog');const code=dialog?.querySelector('code');let trigger:HTMLElement|null=null;
+  document.querySelectorAll<HTMLButtonElement>('.bibtex-open').forEach((button)=>button.addEventListener('click',()=>{trigger=button;if(code)code.textContent=button.dataset.bibtex??'';dialog?.showModal();}));
+  dialog?.addEventListener('close',()=>trigger?.focus());dialog?.addEventListener('click',(e)=>{if(e.target===dialog)dialog.close();});
+  dialog?.querySelector<HTMLButtonElement>('.copy-bib')?.addEventListener('click',async(e)=>{await navigator.clipboard.writeText(code?.textContent??'');(e.currentTarget as HTMLButtonElement).textContent='Copied';});
+</script>
+<style>.bib-dialog{width:min(calc(100% - 2rem),42rem);padding:0;border:1px solid var(--color-line);border-radius:var(--radius-md);background:var(--color-surface);color:var(--color-text);box-shadow:var(--shadow-md)}.bib-dialog::backdrop{background:rgb(0 0 0/.45);backdrop-filter:blur(4px)}.bib-dialog form{padding:1.25rem}.dialog-head{display:flex;align-items:center;justify-content:space-between}.dialog-head h2{margin:0}.dialog-head button{border:0;background:none;font-size:1.8rem;cursor:pointer}.bib-dialog pre{overflow:auto;padding:1rem;background:var(--color-bg);border-radius:var(--radius-sm);white-space:pre-wrap;font-size:.78rem}</style>

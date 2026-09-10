@@ -1,0 +1,23 @@
+---
+import site from '@/data/site.json';
+import type { Locale } from '@/types';
+import { getLocalizedPath, withBase } from '@/utils/urls';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const socials = [
+  { label: 'GitHub', url: site.github }, { label: 'Google Scholar', url: site.googleScholar }, { label: 'ORCID', url: site.orcid }, { label: 'LinkedIn', url: site.linkedin }, ...site.socialLinks
+].filter((item) => item.url);
+---
+<footer class="footer" data-pagefind-ignore>
+  <div class="container footer-grid">
+    <div><p class="footer-name">{locale === 'zh' ? site.name : site.nameEn}</p><p class="muted">{locale === 'zh' ? site.institution : site.institutionEn}</p></div>
+    <div class="footer-links">
+      {site.email && <a href={`mailto:${site.email}`}>Email</a>}
+      {socials.map((item) => <a href={item.url} target="_blank" rel="me noopener">{item.label}</a>)}
+      <a href={withBase(locale === 'en' ? '/en/rss.xml' : '/rss.xml')}>RSS</a>
+      <a href={getLocalizedPath(locale, '/privacy/')}>{locale === 'zh' ? '隐私' : 'Privacy'}</a>
+    </div>
+    <p class="copyright">© {new Date().getFullYear()} {locale === 'zh' ? site.name : site.nameEn}</p>
+  </div>
+</footer>
+<style>.footer{padding:4rem 0 2rem;border-top:1px solid var(--color-line)}.footer-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:3rem}.footer-name{margin:0;font-weight:700}.footer-grid p{margin:.3rem 0}.footer-links{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.5rem 1.2rem}.footer-links a{color:var(--color-muted);font-size:var(--text-sm);text-decoration:none}.footer-links a:hover{color:var(--color-text)}.copyright{grid-column:1/-1;padding-top:2rem;border-top:1px solid var(--color-line);color:var(--color-faint);font-size:var(--text-xs)}@media(max-width:640px){.footer-grid{grid-template-columns:1fr}.footer-links{justify-content:flex-start}.copyright{margin-top:0}}</style>

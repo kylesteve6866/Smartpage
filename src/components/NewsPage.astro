@@ -1,0 +1,10 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import NewsList from './NewsList.astro';
+import type { Locale } from '@/types';
+import { isPublished, sortByDate } from '@/utils/content';
+interface Props { locale: Locale }
+const { locale }=Astro.props;const items=sortByDate((await getCollection('news')).filter((x)=>x.data.locale===locale&&isPublished(x)));
+---
+<BaseLayout title={locale==='zh'?'动态':'News'} description={locale==='zh'?'学术与个人动态。':'Academic and personal updates.'} {locale}><header class="page-head"><div class="container"><p class="eyebrow">{locale==='zh'?'时间线':'Timeline'}</p><h1>{locale==='zh'?'动态':'News'}</h1><p>{locale==='zh'?'论文、会议、项目与学术访问。':'Publications, conferences, projects, and academic visits.'}</p></div></header><section class="section container" data-pagefind-body>{items.length?<NewsList {items} {locale}/>:<p class="empty-state">{locale==='zh'?'暂无已发布动态。':'No news has been published yet.'}</p>}</section></BaseLayout>

@@ -1,0 +1,5 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';import { getLocalizedPath } from '@/utils/urls';
+---
+<BaseLayout title="404" description="Page not found" locale="zh" noindex><section class="not-found container"><p class="eyebrow">404</p><h1>这一页不在这里。</h1><p>Page not found. It may have moved, or the address may be incorrect.</p><div><a class="button" href={getLocalizedPath('zh')}>返回首页</a><a class="button secondary" href={getLocalizedPath('zh','/search/')}>搜索</a></div></section></BaseLayout>
+<style>.not-found{min-height:85svh;display:flex;flex-direction:column;justify-content:center}.not-found h1{max-width:10ch;margin:0;font-size:clamp(3rem,8vw,8rem);line-height:.95;letter-spacing:-.06em}.not-found>p:not(.eyebrow){max-width:35rem;color:var(--color-muted)}.not-found>div{display:flex;gap:.7rem;margin-top:1rem}</style>

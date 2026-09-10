@@ -1,0 +1,11 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProjectCard from './ProjectCard.astro';
+import type { Locale } from '@/types';
+import { isPublished, sortByDate } from '@/utils/content';
+interface Props { locale: Locale }
+const { locale }=Astro.props;
+const projects=sortByDate((await getCollection('projects')).filter((x)=>x.data.locale===locale&&isPublished(x)));
+---
+<BaseLayout title={locale==='zh'?'项目':'Projects'} description={locale==='zh'?'研究项目与协作实践。':'Research projects and collaborative work.'} {locale}><header class="page-head"><div class="container"><p class="eyebrow">{locale==='zh'?'实践':'Work'}</p><h1>{locale==='zh'?'研究项目':'Research projects'}</h1><p>{locale==='zh'?'方法、原型与持续进行的研究工作。':'Methods, prototypes, and research in progress.'}</p></div></header><section class="section container" data-pagefind-body>{projects.length?projects.map((project,index)=><ProjectCard {project} {locale} {index}/>):<p class="empty-state">{locale==='zh'?'项目内容尚未发布。':'No projects have been published yet.'}</p>}</section></BaseLayout>

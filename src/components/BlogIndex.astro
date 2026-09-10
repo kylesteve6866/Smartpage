@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import BlogCard from './BlogCard.astro';
+import type { Locale } from '@/types';
+import { isPublished, sortByDate } from '@/utils/content';
+import { getLocalizedPath } from '@/utils/urls';
+interface Props { locale: Locale; tag?: string; category?: string }
+const { locale, tag, category }=Astro.props;
+const all=sortByDate((await getCollection('blog')).filter((x)=>x.data.locale===locale&&isPublished(x)));
+const posts=all.filter((x)=>(!tag||x.data.tags.includes(tag))&&(!category||x.data.category===category));
+const tags=[...new Set(all.flatMap((x)=>x.data.tags))].sort();const categories=[...new Set(all.map((x)=>x.data.category))].sort();
+const label=tag?`${locale==='zh'?'标签':'Tag'} · ${tag}`:category?`${locale==='zh'?'分类':'Category'} · ${category}`:(locale==='zh'?'博客':'Writing');
+---
+<BaseLayout title={label} description={locale==='zh'?'研究笔记、方法与长期思考。':'Research notes, methods, and considered essays.'} {locale}>
+  <header class="page-head"><div class="container"><p class="eyebrow">{locale==='zh'?'文章与笔记':'Essays & notes'}</p><h1>{label}</h1><p>{locale==='zh'?'记录研究过程，也记录问题如何逐渐变得清晰。':'Notes from the research process, and essays about how questions become clearer.'}</p></div></header>
+  <section class="section container" data-pagefind-body>
+    {all.length>0&&<nav class="archive-nav" aria-label={locale==='zh'?'博客分类':'Blog taxonomy'} data-pagefind-ignore><a class="chip" href={getLocalizedPath(locale,'/blog/')}>{locale==='zh'?'全部':'All'}</a>{categories.map((x)=><a class="chip" href={getLocalizedPath(locale,`/blog/categories/${encodeURIComponent(x)}/`)}>{x}</a>)}{tags.map((x)=><a class="chip" href={getLocalizedPath(locale,`/blog/tags/${encodeURIComponent(x)}/`)}>#{x}</a>)}</nav>}
+    <div class="archive">{posts.length?posts.map((post)=><BlogCard {post} {locale} horizontal/>):<p class="empty-state">{locale==='zh'?'暂无已发布文章。':'No articles have been published yet.'}</p>}</div>
+  </section>
+</BaseLayout>
+<style>.archive-nav{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:3rem}.archive{display:grid;gap:3rem}</style>

@@ -1,0 +1,27 @@
+---
+import site from '@/data/site.json';
+import type { Locale } from '@/types';
+import { assetUrl, getLocalizedPath } from '@/utils/urls';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const name = locale === 'zh' ? site.name : site.nameEn;
+---
+<section class="hero container">
+  <div class="hero-copy">
+    <p class="hero-kicker" data-reveal="fade">{locale === 'zh' ? site.title : site.titleEn}</p>
+    <h1 data-reveal="fade-up"><span>{name}</span>{site.name !== site.nameEn && <small>{locale === 'zh' ? site.nameEn : site.name}</small>}</h1>
+    <p class="hero-bio" data-reveal="fade-up">{locale === 'zh' ? site.bio : site.bioEn}</p>
+    <div class="hero-actions" data-reveal="fade-up">
+      <a class="button" href={getLocalizedPath(locale, '/research/')}>{locale === 'zh' ? '查看研究' : 'View research'}</a>
+      <a class="button secondary" href={getLocalizedPath(locale, '/about/')}>{locale === 'zh' ? '关于我' : 'About me'}</a>
+    </div>
+  </div>
+  <figure class="portrait-wrap" data-reveal="scale">
+    <div class="portrait-frame"><img src={assetUrl(site.avatar)} alt={locale === 'zh' ? `${site.name} 的个人照片占位图` : `Portrait placeholder for ${site.nameEn}`} width="960" height="1200" fetchpriority="high" /></div>
+    <figcaption>{locale === 'zh' ? site.institution : site.institutionEn}</figcaption>
+  </figure>
+</section>
+<style>
+  .hero{min-height:100svh;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(18rem,.65fr);align-items:center;gap:clamp(2rem,7vw,8rem);padding-top:calc(var(--nav-height) + 3rem);padding-bottom:3rem}.hero-kicker{margin:0 0 1.2rem;color:var(--color-muted);font-weight:600}.hero h1{margin:0;line-height:.85;letter-spacing:-.075em}.hero h1 span{display:block;font-size:var(--text-display);font-weight:720}.hero h1 small{display:block;margin-top:1.3rem;font-size:clamp(1.25rem,2.5vw,2.3rem);font-weight:500;letter-spacing:-.04em}.hero-bio{max-width:38rem;margin:2.2rem 0 0;color:var(--color-muted);font-size:var(--text-lg);line-height:1.55}.hero-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}.portrait-wrap{margin:0;align-self:end;padding-bottom:clamp(1rem,6vh,5rem)}.portrait-frame{overflow:hidden;aspect-ratio:4/5;border-radius:clamp(.8rem,2vw,1.6rem);background:var(--color-accent-soft)}.portrait-frame img{width:100%;height:100%;object-fit:cover}.portrait-wrap figcaption{margin-top:.75rem;color:var(--color-faint);font-size:var(--text-xs)}
+  @media(max-width:760px){.hero{min-height:auto;grid-template-columns:1fr;padding-top:8rem;padding-bottom:4rem;gap:3rem}.hero h1{line-height:.92}.portrait-wrap{width:82%;margin-left:auto;padding:0}.hero-bio{margin-top:1.6rem}}
+</style>

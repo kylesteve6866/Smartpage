@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PublicationCard from './PublicationCard.astro';
+import BibtexDialog from './BibtexDialog.astro';
+import type { Locale } from '@/types';
+import { isPublished } from '@/utils/content';
+interface Props { locale: Locale }
+const { locale }=Astro.props;
+const pubs=(await getCollection('publications')).filter((x)=>x.data.locale===locale&&isPublished(x)).sort((a,b)=>b.data.year-a.data.year);
+const types=[...new Set(pubs.map((p)=>p.data.type))];
+const years=[...new Set(pubs.map((p)=>p.data.year))];
+---
+<BaseLayout title={locale==='zh'?'论文':'Publications'} description={locale==='zh'?'按年份整理的学术出版物。':'Academic publications organized by year.'} {locale}>
+  <header class="page-head"><div class="container"><p class="eyebrow">{locale==='zh'?'研究成果':'Research output'}</p><h1>{locale==='zh'?'论文':'Publications'}</h1><p>{locale==='zh'?'按年份倒序浏览，并可按照出版类型筛选。':'Browse in reverse chronological order or filter by publication type.'}</p></div></header>
+  <section class="section container" data-pagefind-body>
+    {types.length>0&&<div class="filters" data-pagefind-ignore><button class="active" data-type="all">{locale==='zh'?'全部':'All'}</button>{types.map((type)=><button data-type={type}>{type}</button>)}</div>}
+    <div class="pub-list">{pubs.length ? years.map((year)=><section class="year-group"><h2>{year}</h2>{pubs.filter((publication)=>publication.data.year===year).map((publication)=><PublicationCard {publication} {locale} />)}</section>) : <p class="empty-state">{locale==='zh'?'论文列表尚未发布。':'No publications have been published yet.'}</p>}</div>
+  </section><BibtexDialog {locale} />
+</BaseLayout>
+<script>document.querySelectorAll<HTMLButtonElement>('.filters button').forEach((b)=>b.addEventListener('click',()=>{document.querySelectorAll('.filters button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll<HTMLElement>('.publication').forEach((p)=>p.hidden=b.dataset.type!=='all'&&p.dataset.type!==b.dataset.type);document.querySelectorAll<HTMLElement>('.year-group').forEach((g)=>g.hidden=![...g.querySelectorAll<HTMLElement>('.publication')].some((p)=>!p.hidden));}));</script>
+<style>.filters{position:sticky;z-index:10;top:calc(var(--nav-height) + .5rem);display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:2rem;padding:.7rem;border:1px solid var(--color-line);border-radius:var(--radius-pill);background:var(--color-elevated);backdrop-filter:blur(14px);width:max-content;max-width:100%}.filters button{padding:.45rem .8rem;border:0;border-radius:var(--radius-pill);background:transparent;color:var(--color-muted);font-size:var(--text-sm);cursor:pointer}.filters button.active{background:var(--color-text);color:var(--color-bg)}.year-group{display:grid;grid-template-columns:6rem 1fr;column-gap:2rem;margin-top:3rem}.year-group>h2{margin:0;color:var(--color-faint);font-size:var(--text-xl);font-variant-numeric:tabular-nums}.year-group :global(.publication){grid-column:2}.year-group :global(.pub-year){display:none}@media(max-width:700px){.year-group{grid-template-columns:1fr}.year-group :global(.publication){grid-column:1}.year-group>h2{margin-bottom:1rem}}</style>
