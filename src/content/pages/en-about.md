@@ -1,22 +1,25 @@
 ---
-title: About
-description: Background, research interests, and academic experience.
+title: About Me
+description: Personal background, research interests, and academic experience.
 locale: en
 page: about
+draft: false
+translationGenerated: true
+translationModel: deepseek-v4-flash
+translationSource: src/content/pages/zh-about.md
 ---
+## Introduction
 
-## Profile
-
-Replace this text with your formal biography. Two to four paragraphs usually work well: introduce your research questions, your approach, and the problems you currently find most important.
+Please fill in your formal personal introduction in the content backend. It is recommended to use two to four paragraphs to explain your research topics, working methods, and the questions you are currently most concerned about.
 
 ## Education
 
-Not added yet. List only your real degrees, institutions, dates, and areas of study.
+Not yet filled in. You can add real experience in the format "time — degree — school — research direction."
 
-## Academic experience
+## Academic Experience
 
-Not added yet. Add verified appointments, visits, and collaborations here.
+Not yet filled in. Only add positions, visiting or collaborative experiences that can be publicly verified.
 
-## Awards and service
+## Honors and Service
 
-Not added yet. Use this section for real awards, academic service, and community contributions.
+Not yet filled in. You can record real awards, academic service, and community contributions here.

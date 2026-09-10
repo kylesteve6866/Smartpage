@@ -1,14 +1,14 @@
 {
   "siteName": "李畅 — 个人学术主页",
-  "siteNameEn": "Kyle — Academic Profile",
+  "siteNameEn": "Chang Li — Personal Academic Homepage",
   "name": "李畅",
   "nameEn": "Kyle",
   "title": "多智能体仿真，强化学习，计算机图形学，群体智能",
-  "titleEn": "Multi-agent simulation, reinforcement learning, computer graphics, swarm intelligence",
+  "titleEn": "Multi-Agent Simulation, Reinforcement Learning, Computer Graphics, Swarm Intelligence",
   "bio": "多智能体仿真、强化学习、计算机图形学与群体智能的交叉研究，旨在理解、建模并重现复杂群体的交互与涌现规律，为大规模智能体在虚拟与现实环境中的自主决策、协同演化和可信仿真提供基础支撑。",
-  "bioEn": "Research at the intersection of multi-agent simulation, reinforcement learning, computer graphics, and swarm intelligence is crucial for understanding, modeling, and reproducing complex group interactions and emergent behaviors, while providing a foundation for autonomous decision-making, coordinated evolution, and realistic large-scale simulation of intelligent agents in both virtual and real-world environments.",
+  "bioEn": "Interdisciplinary research at the intersection of multi-agent simulation, reinforcement learning, computer graphics, and swarm intelligence, aiming to understand, model, and reproduce the interaction and emergence patterns of complex collectives, providing foundational support for autonomous decision-making, collaborative evolution, and trustworthy simulation of large-scale agents in virtual and real environments.",
   "description": "李畅的个人学术主页：研究、论文、项目、写作和随笔。",
-  "descriptionEn": "LiChang’s personal academic website: research, publications, projects, writing, and reflections.",
+  "descriptionEn": "Chang Li's personal academic homepage: research, papers, projects, writing, and essays.",
   "email": "it_changli@gs.zzu.edu.cn",
   "location": "Zhengzhou, Henan Province, China",
   "institution": "郑州大学",
@@ -23,10 +23,10 @@
     "群体智能"
   ],
   "researchInterestsEn": [
-    "Multi-agent simulation",
-    "Reinforcement learning",
-    "Computer graphics",
-    "Swarm intelligence"
+    "Multi-Agent Simulation",
+    "Reinforcement Learning",
+    "Computer Graphics",
+    "Swarm Intelligence"
   ],
   "navigation": [
     {

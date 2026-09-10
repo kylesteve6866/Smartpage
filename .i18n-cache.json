@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "model": "deepseek-v4-flash",
+  "entries": {
+    "site-settings": {
+      "hash": "ce9e961e1a7f2f2f72927d76411643c7375ae3c7189c137205ab594533d00fd7",
+      "generated": true
+    },
+    "src/content/pages/zh-about.md": {
+      "hash": "1ed1f13d6407ced444d2c4d03dfad2449d2a3dcac49fe81d982ee351620b4ca5",
+      "targetPath": "src/content/pages/en-about.md",
+      "generated": true
+    },
+    "src/content/pages/zh-cv.md": {
+      "hash": "56bf0acac1eadf27c1bf92bdd0c4280e8ec58076a807f50756e69316cddf7218",
+      "targetPath": "src/content/pages/en-cv.md",
+      "generated": true
+    },
+    "src/content/pages/zh-research.md": {
+      "hash": "6771dbbf70708bcedc1a47be84012357bcf0b6e28d7c9d66d0ba4d7ee3aafee6",
+      "targetPath": "src/content/pages/en-research.md",
+      "generated": true
+    }
+  }
+}

@@ -1,22 +1,25 @@
 ---
-title: Curriculum vitae
-description: An online summary of education, appointments, output, and academic service.
+title: Academic CV
+description: An online summary of education, experience, achievements, and academic service.
 locale: en
 page: cv
+draft: false
+translationGenerated: true
+translationModel: deepseek-v4-flash
+translationSource: src/content/pages/zh-cv.md
 ---
+## Basic Information
 
-## Profile
+Please fill in your actual CV using Pages CMS or Markdown. After placing your PDF at `public/cv/cv.pdf`, a download button will automatically appear on the page.
 
-Add your verified CV details through Pages CMS or Markdown. When `public/cv/cv.pdf` exists, the download button appears automatically.
+## Education and Appointments
 
-## Education and appointments
+Not yet filled in.
 
-Not added yet.
+## Research Achievements
 
-## Research output
+For full achievements, please see the publications page.
 
-See the Publications page for the complete list.
+## Academic Service
 
-## Academic service
-
-Not added yet.
+Not yet filled in.
