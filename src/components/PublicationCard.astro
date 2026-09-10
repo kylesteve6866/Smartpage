@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from '@/types';
-import site from '@/data/site.json';
+import site from '@/data/site';
 import { assetUrl } from '@/utils/urls';
 interface Props { publication: CollectionEntry<'publications'>; locale: Locale }
 const { publication: pub, locale } = Astro.props;

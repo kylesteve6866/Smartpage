@@ -3,7 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import type { Locale } from '@/types';
 import { assetUrl } from '@/utils/urls';
-import site from '@/data/site.json';
+import site from '@/data/site';
 import { existsSync } from 'node:fs';
 interface Props { locale: Locale; page: 'about'|'research'|'cv' }
 const { locale, page } = Astro.props;

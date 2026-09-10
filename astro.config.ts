@@ -8,7 +8,7 @@ import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { unified } from '@astrojs/markdown-remark';
 import rehypeBaseAssets from './src/utils/rehype-base-assets';
-import siteSettings from './src/data/site.json';
+import siteSettings from './src/data/site';
 
 const [owner = '', repository = ''] = (process.env.GITHUB_REPOSITORY ?? '').split('/');
 const isUserPage = repository === `${owner}.github.io`;

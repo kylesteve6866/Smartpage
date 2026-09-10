@@ -1,5 +1,5 @@
 ---
-import site from '@/data/site.json';
+import site from '@/data/site';
 const enabled = site.features.liveChat && site.tawk.propertyId && site.tawk.widgetId;
 ---
 {enabled && <script is:inline define:vars={{ propertyId: site.tawk.propertyId, widgetId: site.tawk.widgetId }}>
