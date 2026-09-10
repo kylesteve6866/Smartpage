@@ -81,14 +81,14 @@ const requestTranslation = async (purpose, payload, maxTokens = 32768) => {
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+        signal: AbortSignal.timeout(120000),
         body: JSON.stringify({
           model: MODEL,
           messages,
           thinking: { type: 'disabled' },
           response_format: { type: 'json_object' },
           max_tokens: maxTokens,
-          stream: false,
-          signal: AbortSignal.timeout(120000)
+          stream: false
         })
       });
       const result = await response.json();
@@ -191,15 +191,16 @@ for (const [collection, config] of Object.entries(configs)) {
       continue;
     }
     const translated = await requestTranslation(`${collection} entry`, input);
-    if (!translated || typeof translated !== 'object' || typeof translated.body !== 'string' || !translated.frontmatter || typeof translated.frontmatter !== 'object') throw new Error(`翻译结果格式错误：${source.path}`);
-    const targetData = { ...source.data, ...translated.frontmatter, locale: 'en', draft: Boolean(source.data.draft), translationGenerated: true, translationModel: MODEL, translationSource: source.path };
+    if (!translated || typeof translated !== 'object' || Array.isArray(translated) || typeof translated.body !== 'string') throw new Error(`翻译结果格式错误：${source.path}`);
+    const { body: translatedBody, linkLabels: translatedLinkLabels, ...translatedFields } = translated;
+    const targetData = { ...source.data, ...translatedFields, locale: 'en', draft: Boolean(source.data.draft), translationGenerated: true, translationModel: MODEL, translationSource: source.path };
     if (config.key) targetData[config.key] = keyValue;
     if (collection === 'projects' && Array.isArray(source.data.links)) {
-      const labels = Array.isArray(translated.frontmatter.linkLabels) ? translated.frontmatter.linkLabels : [];
+      const labels = Array.isArray(translatedLinkLabels) ? translatedLinkLabels : [];
       targetData.links = source.data.links.map((link, index) => ({ ...link, label: typeof labels[index] === 'string' ? labels[index] : link.label }));
       delete targetData.linkLabels;
     }
-    writeIfChanged(targetFile, serializeDocument(targetData, translated.body));
+    writeIfChanged(targetFile, serializeDocument(targetData, translatedBody));
     state.entries[entryKey] = { hash: sourceHash, targetPath, generated: true };
     saveState();
   }
